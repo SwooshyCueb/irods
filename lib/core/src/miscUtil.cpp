@@ -2343,7 +2343,7 @@ int
 resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
     rodsPath_t *srcPath, *destPath;
     char srcElement[MAX_NAME_LEN], destElement[MAX_NAME_LEN];
-    int status;
+    int status = 0;
     int srcInx;
     rodsPath_t *targPath;
 
@@ -2435,7 +2435,10 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
             }
             else if ( destPath->objType == DATA_OBJ_T ||
                       destPath->objType == LOCAL_FILE_T || rodsPathInp->numSrc == 1 ) {
-                if ( destPath->objState != EXIST_ST && rodsPathInp->numSrc == 1 ) {
+                //*
+                if ( destPath->objState != EXIST_ST &&
+                     destPath->objType <= DATA_OBJ_T &&
+                     rodsPathInp->numSrc == 1 ) {
                     // single source, and destination probably includes new name
                     // if parent of destination does not exist (or is not collection), panic
                     rodsPath_t parentPath{};
@@ -2450,6 +2453,7 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                         return USER_FILE_DOES_NOT_EXIST;
                     }
                 }
+                //*/
                 *targPath = *destPath;
                 if ( destPath->objType <= COLL_OBJ_T ) {
                     targPath->objType = DATA_OBJ_T;
@@ -2459,8 +2463,11 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                 }
             }
             else {
+                //*
                 if ( ( oprType == PUT_OPR || oprType == RSYNC_OPR ) &&
-                     rodsPathInp->numSrc > 1 && destPath->objState != EXIST_ST ) {
+                     rodsPathInp->numSrc > 1 &&
+                     destPath->objType <= COLL_OBJ_T &&
+                     destPath->objState != EXIST_ST ) {
                     // multiple sources; destination does not exist
                     // mkColl changes the values in destPath, so repopulate the structure
                     status = mkColl( conn, destPath->outPath );
@@ -2476,6 +2483,12 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                                   destPath->outPath );
                     return USER_FILE_DOES_NOT_EXIST;
                 }
+                /*/
+                rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
+                              "resolveRodsTarget: target %s does not exist",
+                              destPath->outPath );
+                return USER_FILE_DOES_NOT_EXIST;
+                //*/
             }
         }
         else if ( srcPath->objType == COLL_OBJ_T ||
@@ -2500,6 +2513,7 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
             {
                 // Issue 3997: First, find out if the destination is a
                 // non-existent collection, and create it if necessary.
+                //*
                 // these nested if/elifs can probably be simplified somewhat
                 if (destPath->objState != EXIST_ST && destPath->objType <= COLL_OBJ_T) {
                     if (oprType != MOVE_OPR && oprType != COPY_DEST && rodsPathInp->numSrc != 1) {
@@ -2527,6 +2541,20 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                         }
                     }
                 }
+                /*/
+                if (destPath->objState != EXIST_ST && destPath->objType <= COLL_OBJ_T &&
+                    oprType != MOVE_OPR && oprType != COPY_DEST && rodsPathInp->numSrc != 1)
+                {
+                    // mkColl changes the values in destPath, so repopulate the structure
+                    status = mkColl( conn, destPath->outPath );
+                    if ( status < 0 ) {
+                        rodsLog( LOG_ERROR,
+                                 "resolveRodsTarget: Could not create collection %s", destPath->outPath );
+                        return status;
+                    }
+                    getRodsObjType( conn, destPath );
+                }
+                //*/
                 if ( ( destPath->objType == COLL_OBJ_T ||
                        destPath->objType == LOCAL_DIR_T ) &&
                        destPath->objState == EXIST_ST ) {

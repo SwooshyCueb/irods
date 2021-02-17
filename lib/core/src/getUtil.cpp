@@ -60,7 +60,8 @@ getUtil( rcComm_t **myConn, rodsEnv *myRodsEnv, rodsArguments_t *myRodsArgs,
     initCondForGet( conn, myRodsArgs, &dataObjOprInp, &rodsRestart );
 
     if ( rodsPathInp->resolved == False ) {
-        status = resolveRodsTarget( conn, rodsPathInp, 1 );
+        status = resolveRodsTarget( conn, rodsPathInp, PUT_OPR );
+        //status = resolveRodsTarget( conn, rodsPathInp, GET_OPR );
         if ( status < 0 ) {
             rodsLogError( LOG_ERROR, status,
                           "getUtil: resolveRodsTarget" );
