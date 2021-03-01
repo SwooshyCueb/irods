@@ -9,7 +9,7 @@
 #include "parseCommandLine.h"
 #include "guiProgressCallback.h"
 
-#define	INIT_UMASK_VAL	99999999
+#define	INIT_UMASK_VAL 99999999
 
 typedef struct CollSqlResult {
     int rowCnt;
@@ -65,7 +65,10 @@ typedef struct DataObjMetaInfo {
     char *dataId;
 } dataObjMetaInfo_t;
 
-// definition for state in collHandle_t
+/**
+ * \enum collState_t
+ * \brief Definition for state in collHandle_t
+ */
 typedef enum CollState {
     COLL_CLOSED,
     COLL_OPENED,
@@ -78,7 +81,10 @@ typedef enum ConnType {
     RS_COMM
 } connType_t;
 
-// struct for query by both client and server
+/**
+ * \struct queryHandle_t
+ * \brief Struct for query by both client and server
+ */
 typedef struct QueryHandle {
     void *conn;            // either rsComm or rcComm
     connType_t connType;
@@ -87,13 +93,17 @@ typedef struct QueryHandle {
     funcPtr getHierForId;  // rc/rs GetHierForRescId
 } queryHandle_t;
 
-// definition for flag in rclOpenCollection and collHandle_t
-#define LONG_METADATA_FG           0x1  // get verbose metadata
-#define VERY_LONG_METADATA_FG      0x2  // get verbose metadata
-#define RECUR_QUERY_FG             0x4  // get recursive query
-#define DATA_QUERY_FIRST_FG        0x8  // get data res first
-#define NO_TRIM_REPL_FG            0x10 // don't trim the replica
-#define INCLUDE_CONDINPUT_IN_QUERY 0x20 // include the cond in condInput in the query
+/**
+ * \defgroup collection_flag_defs
+ * \{
+ */
+#define LONG_METADATA_FG           0x1  ///< get verbose metadata
+#define VERY_LONG_METADATA_FG      0x2  ///< get verbose metadata
+#define RECUR_QUERY_FG             0x4  ///< get recursive query
+#define DATA_QUERY_FIRST_FG        0x8  ///< get data res first
+#define NO_TRIM_REPL_FG            0x10 ///< don't trim the replica
+#define INCLUDE_CONDINPUT_IN_QUERY 0x20 ///< include the cond in condInput in the query
+/** \} */
 
 typedef struct CollHandle {
     collState_t state;
@@ -110,7 +120,10 @@ typedef struct CollHandle {
     char prevdataId[NAME_LEN];
 } collHandle_t;
 
-// the output of rclReadCollection
+/**
+ * \struct collEnt_t
+ * \brief Return value of rclReadCollection
+ */
 typedef struct CollEnt {
     objType_t objType;
     int replNum;
@@ -131,7 +144,10 @@ typedef struct CollEnt {
     specColl_t specColl; // valid only for collection
 } collEnt_t;
 
-// used to store regex patterns used to match pathnames
+/**
+ * \struct pathnamePatterns_t
+ * \brief Struct for regex patterns unsed to match pathnames
+ */
 typedef struct PathnamePatterns {
     char *pattern_buf;
     char **patterns;
@@ -268,7 +284,36 @@ freePathnamePatterns( pathnamePatterns_t *pp );
 int
 matchPathname( pathnamePatterns_t *pp, char *name, char *dirname );
 int get_resc_hier_from_leaf_id(queryHandle_t* _query_handle, rodsLong_t _resc_id, char* _resc_hier );
+
+/**
+ * \fn getPathParent
+ * \brief Populate a path object with the parent path of the provided path object.
+ *
+ * \param[in] conn Pointer to the connection object to use
+ * \param[in] targPath Pointer to the path object containing the target path
+ * \param[in,out] parentPath Pointer to a path object to populate with the parent path
+ */
+int getPathParent( rcComm_t *conn, const rodsPath_t* targPath, rodsPath_t* parentPath );
+
+/**
+ * \fn resolveRodsTarget
+ * \brief Resolve paths and fill in targets for an operation.
+ *
+ * \param[in] conn Pointer to the connection object to use
+ * \param[in,out] rodsPathInp Pointer to the paths object to resolve
+ * \param[in] oprType Operation type
+ */
 int resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType );
+
+/**
+ * \fn prepareRodsTarget
+ * \brief Resolve paths, fill in targes for an operation, and, if appropriate, create collections/directories.
+ *
+ * \param[in] conn Pointer to the connection object to use
+ * \param[in,out] rodsPathInp Pointer to the paths object to resolve
+ * \param[in] oprType Operation type
+ */
+int prepareRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType );
 
 #ifdef __cplusplus
 }

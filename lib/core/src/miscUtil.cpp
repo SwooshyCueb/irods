@@ -24,6 +24,14 @@
 /* VERIFY_DIV - contributed by g.soudlenkov@auckland.ac.nz */
 #define VERIFY_DIV(_v1_,_v2_) ((_v2_)? (float)(_v1_)/(_v2_):0.0)
 
+#ifndef prt_mkdir
+#ifdef windows_platform
+#define rodsTarg_mkdir iRODSNt_mkdir
+#else
+#define rodsTarg_mkdir  mkdir
+#endif
+#endif
+
 static uint Myumask = INIT_UMASK_VAL;
 
 const char NON_ROOT_COLL_CHECK_STR[] = "<>'/'";
@@ -135,12 +143,7 @@ mkdirR( char *startDir, char *destDir, int mode ) {
     while ( tmpLen < pathLen ) {
         /* Put back the '/' */
         tmpPath[tmpLen] = '/';
-#ifdef _WIN32
-        status = iRODSNt_mkdir( tmpPath, mode );
-#else
-
-        status = mkdir( tmpPath, mode );
-#endif
+        status = rodsTarg_mkdir( tmpPath, mode );
         if ( status < 0 ) {
             rodsLog( LOG_NOTICE,
                      "mkdirR: mkdir failed for %s, errno =%d",
@@ -2331,6 +2334,154 @@ matchPathname( pathnamePatterns_t *pp, char *name, char *dirname ) {
     return 0;
 }
 
+#if 0
+#include <magic_enum.hpp>
+#define enum_name magic_enum::enum_name
+#else
+#define enum_name
+#endif
+
+static void dumpSpecColl(specColl_t *rodsColl, int _indent) {
+    std::string indent;
+    {
+        std::ostringstream ss;
+        for ( int i = 0; i < _indent; i++ ) {
+            ss << " ";
+        }
+        indent = ss.str();
+    }
+    std::cout << indent << "collClass: " << enum_name(rodsColl->collClass) << "\n";
+    std::cout << indent << "type: " << enum_name(rodsColl->type) << "\n";
+    std::cout << indent << "collection: " << rodsColl->collection << "\n";
+    std::cout << indent << "objPath: " << rodsColl->objPath << "\n";
+    std::cout << indent << "resource: " << rodsColl->resource << "\n";
+    std::cout << indent << "rescHier: " << rodsColl->rescHier << "\n";
+    std::cout << indent << "phyPath: " << rodsColl->phyPath << "\n";
+    std::cout << indent << "cacheDir: " << rodsColl->cacheDir << "\n";
+    std::cout << indent << "cacheDirty: " << rodsColl->cacheDirty << "\n";
+    std::cout << indent << "replNum: " << rodsColl->replNum << "\n";
+}
+
+static void dumpStat(rodsObjStat_t *rodsStat, int _indent) {
+    std::string indent;
+    {
+        std::ostringstream ss;
+        for ( int i = 0; i < _indent; i++ ) {
+            ss << " ";
+        }
+        indent = ss.str();
+    }
+    std::cout << indent << "objType: " << enum_name(rodsStat->objType) << "\n";
+    std::cout << indent << "objSize: " << rodsStat->objSize << "\n";
+    std::cout << indent << "dataMode: " << rodsStat->dataMode << "\n";
+    std::cout << indent << "dataId: " << rodsStat->dataId << "\n";
+    std::cout << indent << "chksum: " << rodsStat->chksum << "\n";
+    std::cout << indent << "ownerName: " << rodsStat->ownerName << "\n";
+    std::cout << indent << "ownerZone: " << rodsStat->ownerZone << "\n";
+    std::cout << indent << "createTime: " << rodsStat->createTime << "\n";
+    std::cout << indent << "modifyTime: " << rodsStat->modifyTime << "\n";
+    std::cout << indent << "rescHier: " << rodsStat->rescHier << "\n";
+    std::cout << indent << "specColl:";
+    if (rodsStat->specColl == NULL) {
+        std::cout << " NULL\n";
+    } else {
+        std::cout << "\n";
+        dumpSpecColl(rodsStat->specColl, _indent + 2);
+    }
+}
+
+static void dumpPath(rodsPath_t *rodsPath, int _indent) {
+    std::string indent;
+    {
+        std::ostringstream ss;
+        for ( int i = 0; i < _indent; i++ ) {
+            ss << " ";
+        }
+        indent = ss.str();
+    }
+    std::cout << indent << "inPath: " << rodsPath->inPath << "\n";
+    std::cout << indent << "outPath: " << rodsPath->outPath << "\n";
+    std::cout << indent << "objType: " << enum_name(rodsPath->objType) << "\n";
+    std::cout << indent << "objState: " << enum_name(rodsPath->objState) << "\n";
+    std::cout << indent << "objMode: " << rodsPath->objMode << "\n";
+    std::cout << indent << "size: " << rodsPath->size << "\n";
+    std::cout << indent << "dataId: " << rodsPath->dataId << "\n";
+    std::cout << indent << "chksum: " << rodsPath->chksum << "\n";
+    std::cout << indent << "rodsObjStat:";
+    if (rodsPath->rodsObjStat == NULL) {
+        std::cout << " NULL\n";
+    } else {
+        std::cout << "\n";
+        dumpStat(rodsPath->rodsObjStat, _indent + 2);
+    }
+}
+
+static void dumpPaths(rodsPathInp_t *rodsPathInp, int _indent) {
+    std::string indent;
+    {
+        std::ostringstream ss;
+        for ( int i = 0; i < _indent; i++ ) {
+            ss << " ";
+        }
+        indent = ss.str();
+    }
+    std::cout << indent << "numSrc: " << rodsPathInp->numSrc << "\n";
+    std::cout << indent << "resolved: " << rodsPathInp->resolved << "\n";
+    std::cout << indent << "destPath:";
+    if (rodsPathInp->destPath == NULL) {
+        std::cout << " NULL\n";
+    } else {
+        std::cout << "\n";
+        dumpPath(rodsPathInp->destPath, _indent + 2);
+    }
+    if (rodsPathInp->srcPath == NULL) {
+        std::cout << indent << "srcPath: NULL\n";
+    } else {
+        for ( int srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
+            std::cout << indent << "srcPath " << srcInx << ":\n";
+            dumpPath(&(rodsPathInp->srcPath[srcInx]), _indent + 2);
+        }
+    }
+    if (rodsPathInp->targPath == NULL) {
+        std::cout << indent << "targPath: NULL\n";
+    } else {
+        for ( int srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
+            std::cout << indent << "targPath " << srcInx << ":\n";
+            dumpPath(&(rodsPathInp->targPath[srcInx]), _indent + 2);
+        }
+    }
+}
+
+int resolveRodsTarget_legacy( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType );
+int resolveRodsTarget_new( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType );
+int prepareRodsTarget_new( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType );
+
+int
+resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
+    //std::cout << "resolveRodsTarget (oprType = " << oprType << ") pre:\n";
+    //dumpPaths(rodsPathInp, 2);
+    //std::cout << std::flush;
+    //int status = resolveRodsTarget_legacy(conn, rodsPathInp, oprType);
+    int status = resolveRodsTarget_new(conn, rodsPathInp, oprType);
+    //std::cout << "resolveRodsTarget (oprType = " << oprType << ") post:\n";
+    //dumpPaths(rodsPathInp, 2);
+    //std::cout << std::flush;
+    return status;
+}
+
+int
+prepareRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
+    //std::cout << "prepareRodsTarget (oprType = " << oprType << ") pre:\n";
+    //dumpPaths(rodsPathInp, 2);
+    //std::cout << std::flush;
+    //int status = resolveRodsTarget_old(conn, rodsPathInp, oprType);
+    int status = prepareRodsTarget_new(conn, rodsPathInp, oprType);
+    //std::cout << "prepareRodsTarget (oprType = " << oprType << ") post:\n";
+    //dumpPaths(rodsPathInp, 2);
+    //std::cout << std::flush;
+    return status;
+}
+
 /* resolveRodsTarget - based on srcPath and destPath, fill in targPath.
  * oprType -
  *      MOVE_OPR - do not create the target coll or dir because rename will
@@ -2340,14 +2491,12 @@ matchPathname( pathnamePatterns_t *pp, char *name, char *dirname ) {
  *      All other oprType will be treated as normal.
  */
 int
-resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
+resolveRodsTarget_legacy( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
     rodsPath_t *srcPath, *destPath;
     char srcElement[MAX_NAME_LEN], destElement[MAX_NAME_LEN];
     int status;
     int srcInx;
     rodsPath_t *targPath;
-
-    namespace fs = irods::experimental::filesystem;
 
     if ( rodsPathInp == NULL ) {
         rodsLog( LOG_ERROR,
@@ -2372,25 +2521,20 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
         getRodsObjType( conn, destPath );
     }
 
-    // get src info first
-    for ( srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
-        srcPath = &rodsPathInp->srcPath[srcInx];
-        if ( srcPath->objState == UNKNOWN_ST ) {
-            getRodsObjType( conn, srcPath );
-        }
-    }
-
     for ( srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
         srcPath = &rodsPathInp->srcPath[srcInx];
         targPath = &rodsPathInp->targPath[srcInx];
 
         /* we don't do wild card yet */
 
-        if ( srcPath->objState == NOT_EXIST_ST ) {
-            rodsLog( LOG_ERROR,
-                     "resolveRodsTarget: srcPath %s does not exist",
-                     srcPath->outPath );
-            return USER_INPUT_PATH_ERR;
+        if ( srcPath->objState == UNKNOWN_ST ) {
+            getRodsObjType( conn, srcPath );
+            if ( srcPath->objState == NOT_EXIST_ST ) {
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: srcPath %s does not exist",
+                         srcPath->outPath );
+                return USER_INPUT_PATH_ERR;
+            }
         }
 
         if ( destPath->objType >= UNKNOWN_FILE_T &&
@@ -2435,21 +2579,6 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
             }
             else if ( destPath->objType == DATA_OBJ_T ||
                       destPath->objType == LOCAL_FILE_T || rodsPathInp->numSrc == 1 ) {
-                if ( destPath->objState != EXIST_ST && rodsPathInp->numSrc == 1 ) {
-                    // single source, and destination probably includes new name
-                    // if parent of destination does not exist (or is not collection), panic
-                    rodsPath_t parentPath{};
-                    rstrcpy( parentPath.outPath, fs::path(destPath->outPath).parent_path().c_str(),
-                             MAX_NAME_LEN );
-                    parentPath.objType = COLL_OBJ_T;
-                    getRodsObjType( conn, &parentPath );
-                    if ( parentPath.objState == NOT_EXIST_ST) {
-                        rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
-                                      "resolveRodsTarget: destination collection %s does not exist",
-                                      parentPath.outPath );
-                        return USER_FILE_DOES_NOT_EXIST;
-                    }
-                }
                 *targPath = *destPath;
                 if ( destPath->objType <= COLL_OBJ_T ) {
                     targPath->objType = DATA_OBJ_T;
@@ -2459,23 +2588,10 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                 }
             }
             else {
-                if ( ( oprType == PUT_OPR || oprType == RSYNC_OPR ) &&
-                     rodsPathInp->numSrc > 1 && destPath->objState != EXIST_ST ) {
-                    // multiple sources; destination does not exist
-                    // mkColl changes the values in destPath, so repopulate the structure
-                    status = mkColl( conn, destPath->outPath );
-                    if ( status < 0 ) {
-                        rodsLog( LOG_ERROR,
-                                 "resolveRodsTarget: Could not create collection %s", destPath->outPath );
-                        return status;
-                    }
-                    getRodsObjType( conn, destPath );
-                } else {
-                    rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
-                                  "resolveRodsTarget: target %s does not exist",
-                                  destPath->outPath );
-                    return USER_FILE_DOES_NOT_EXIST;
-                }
+                rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
+                              "resolveRodsTarget: target %s does not exist",
+                              destPath->outPath );
+                return USER_FILE_DOES_NOT_EXIST;
             }
         }
         else if ( srcPath->objType == COLL_OBJ_T ||
@@ -2500,32 +2616,17 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
             {
                 // Issue 3997: First, find out if the destination is a
                 // non-existent collection, and create it if necessary.
-                // these nested if/elifs can probably be simplified somewhat
-                if (destPath->objState != EXIST_ST && destPath->objType <= COLL_OBJ_T) {
-                    if (oprType != MOVE_OPR && oprType != COPY_DEST && rodsPathInp->numSrc != 1) {
-                        // mkColl changes the values in destPath, so repopulate the structure
-                        status = mkColl( conn, destPath->outPath );
-                        if ( status < 0 ) {
-                            rodsLog( LOG_ERROR,
-                                     "resolveRodsTarget: Could not create collection %s", destPath->outPath );
-                            return status;
-                        }
-                        getRodsObjType( conn, destPath );
-                    } else {
-                        // everything else needs destination parent checking
-                        // if parent of destination does not exist (or is not collection), panic
-                        rodsPath_t parentPath{};
-                        rstrcpy( parentPath.outPath, fs::path(destPath->outPath).parent_path().c_str(),
-                                 MAX_NAME_LEN );
-                        parentPath.objType = COLL_OBJ_T;
-                        getRodsObjType( conn, &parentPath );
-                        if ( parentPath.objState == NOT_EXIST_ST) {
-                            rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
-                                          "resolveRodsTarget: destination collection %s does not exist",
-                                          parentPath.outPath );
-                            return USER_FILE_DOES_NOT_EXIST;
-                        }
+                if (destPath->objState != EXIST_ST && destPath->objType <= COLL_OBJ_T &&
+                    oprType != MOVE_OPR && rodsPathInp->numSrc != 1)
+                {
+                    // mkColl changes the values in destPath, so repopulate the structure
+                    status = mkColl( conn, destPath->outPath );
+                    if ( status < 0 ) {
+                        rodsLog( LOG_ERROR,
+                                 "resolveRodsTarget: Could not create collection %s", destPath->outPath );
+                        return status;
                     }
+                    getRodsObjType( conn, destPath );
                 }
                 if ( ( destPath->objType == COLL_OBJ_T ||
                        destPath->objType == LOCAL_DIR_T ) &&
@@ -2548,7 +2649,7 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                             if ( destPath->objType == COLL_OBJ_T ) {
 
                                 /* rename does not need to mkColl */
-                                if ( oprType != MOVE_OPR && oprType != COPY_DEST ) {
+                                if ( oprType != MOVE_OPR ) {
                                     // destPath is a collection
 
                                     // Issue 4057: When destPath is a collection (and we already know it
@@ -2566,11 +2667,7 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                                 }
                             }
                             else {
-    #ifdef windows_platform
-                                status = iRODSNt_mkdir( targPath->outPath, 0750 );
-    #else
-                                status = mkdir( targPath->outPath, 0750 );
-    #endif
+                                status = rodsTarg_mkdir( targPath->outPath, 0750 );
                                 if ( status < 0 && errno == EEXIST ) {
                                     status = 0;
                                 }
@@ -2591,7 +2688,7 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                 else {
                     /* dest coll does not exist */
                     if ( destPath->objType <= COLL_OBJ_T ) {
-                        if ( oprType != MOVE_OPR  && oprType != COPY_DEST ) {
+                        if ( oprType != MOVE_OPR ) {
                             /* rename does not need to mkColl */
                             status = mkColl( conn, destPath->outPath );
                         }
@@ -2602,11 +2699,7 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
                     else {
                         /* use destPath. targPath->outPath not defined.
                          *  status = mkdir (targPath->outPath, 0750); */
-    #ifdef windows_platform
-                        status = iRODSNt_mkdir( destPath->outPath, 0750 );
-    #else
-                        status = mkdir( destPath->outPath, 0750 );
-    #endif
+                        status = rodsTarg_mkdir( destPath->outPath, 0750 );
                     }
                     if ( status < 0 ) {
                         return status;
@@ -2639,5 +2732,699 @@ resolveRodsTarget( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
             return USER_INPUT_PATH_ERR;
         }
     }
+    return 0;
+}
+
+int
+getPathParent( rcComm_t *conn, const rodsPath_t* targPath, rodsPath_t* parentPath ) {
+    int status;
+
+    namespace fs = irods::experimental::filesystem;
+
+    if ( targPath == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "getPathParent: NULL targPath input" );
+        return SYS_INTERNAL_NULL_INPUT_ERR;
+    }
+
+    if ( parentPath == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "getPathParent: NULL parentPath input" );
+        return SYS_INTERNAL_NULL_INPUT_ERR;
+    }
+
+    memset( parentPath, 0, sizeof( rodsPath_t ) );
+
+    // TODO: should we use std::filesystem for objType > COLL_OBJ_T?
+    fs::path outPath(targPath->outPath);
+    if ( outPath.has_parent_path() ) {
+        objType_t parentType;
+        objType_t leafType;
+        const char* parentType_sz = outPath.parent_path().c_str();
+
+        if ( targPath->objType <= COLL_OBJ_T ) {
+            rstrcpy( parentPath->outPath, parentType_sz,
+                     MAX_NAME_LEN );
+            parentType = COLL_OBJ_T;
+            leafType = DATA_OBJ_T;
+            //parentPath.objType = parentType;
+            status = getRodsObjType(conn, parentPath);
+            if ( status < 0 ) {
+                rodsLogError( LOG_ERROR, status,
+                              "getPathParent: getRodsObjType error, status = %d", status );
+                return status;
+            }
+        }
+        else {
+            rstrcpy( parentPath->inPath, parentType_sz,
+                     MAX_NAME_LEN );
+            parentType = LOCAL_DIR_T;
+            leafType = COLL_OBJ_T;
+            //parentPath.objType = parentType;
+            status = parseLocalPath(parentPath);
+            if ( status < 0 ) {
+                rodsLogError( LOG_ERROR, status,
+                              "getPathParent: parseLocalPath error, status = %d", status );
+                return status;
+            }
+        }
+
+        if ( parentPath->objType == leafType ) {
+            rodsLogError( LOG_ERROR, status,
+                          "getPathParent: parseLocalPath error, status = %d", status );
+            return status;
+        }
+    }
+
+    return 0;
+}
+
+int
+resolveRodsTarget_new( rcComm_t *conn, rodsPathInp_t *rodsPathInp, const int oprType ) {
+    rodsPath_t *srcPath, *destPath, *targPath;
+    char srcElement[MAX_NAME_LEN], destElement[MAX_NAME_LEN];
+    int status = 0;
+    int srcInx;
+
+    namespace fs = irods::experimental::filesystem;
+
+    if ( rodsPathInp == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "resolveRodsTarget: NULL rodsPathInp input" );
+        return USER__NULL_INPUT_ERR;
+    }
+
+    if ( rodsPathInp->srcPath == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "resolveRodsTarget: NULL rodsPathInp->srcPath input" );
+        return USER__NULL_INPUT_ERR;
+    }
+
+    if ( rodsPathInp->destPath == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "resolveRodsTarget: NULL rodsPathInp->destPath input" );
+        return USER__NULL_INPUT_ERR;
+    }
+
+    destPath = rodsPathInp->destPath;
+    if ( destPath->objState == UNKNOWN_ST ) {
+        if ( destPath->objType <= COLL_OBJ_T ) {
+            getRodsObjType( conn, destPath );
+        }
+        else {
+            getFileType(destPath);
+        }
+    }
+
+    // we don't do wildcard yet
+
+    int firstErrCode = 0;
+
+    // if numSrc < 1, complain loudly
+    // this is probably valid behavior, but I'd like to hear about it
+    // when it happens until I'm done here
+    if ( rodsPathInp->numSrc < 1 ) {
+        rodsLog( LOG_ERROR,
+                 "resolveRodsTarget: source count is %d",
+                 rodsPathInp->numSrc );
+    }
+
+    // get info for all sources
+    for ( srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
+        srcPath = &rodsPathInp->srcPath[srcInx];
+        if ( srcPath->objState == UNKNOWN_ST ) {
+            if ( srcPath->objType <= COLL_OBJ_T ) {
+                getRodsObjType( conn, srcPath );
+            }
+            else {
+                getFileType(srcPath);
+            }
+            // getFileType?
+            if ( srcPath->objState == NOT_EXIST_ST ) {
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: srcPath %s does not exist",
+                         srcPath->outPath );
+                firstErrCode = firstErrCode == 0 ? USER_INPUT_PATH_ERR : firstErrCode;
+            }
+        }
+    }
+
+    const bool destStdout = destPath->objType >= UNKNOWN_FILE_T &&
+                            strcmp( destPath->outPath, STDOUT_FILE_NAME ) == 0;
+
+    if ( !destStdout ) {
+
+        if ( rodsPathInp->numSrc > 1 &&
+             ( destPath->objType == DATA_OBJ_T ||
+               destPath->objType == LOCAL_FILE_T ) ) {
+            // non-stdout file type destination with multiple sources
+            // we don't support this currently
+            rodsLog( LOG_ERROR,
+                     "resolveRodsTarget: dest - is the wrong type multiple sources" );
+            return firstErrCode == 0 ? USER_INPUT_PATH_ERR : firstErrCode;
+        }
+
+        // deal with missing dest
+        if ( destPath->objState != EXIST_ST ) {
+            bool do_err = true;
+            // missing dest is fine under one of these conditions:
+            // 1. single source,RSYNC_OPR dest is path to new object of similar type inside
+            //    already existing collection/directory (full path with new name)
+            // 2. multiple sources, opr is put or rsync, dest is new
+            //    collection/directory inside already existing collection/directory
+
+            // in the interest of readable code, I've split out some of the conditionals
+
+            const bool is_single_source = rodsPathInp->numSrc == 1;
+            const bool is_either_type_unknown = destPath->objType == UNKNOWN_OBJ_T ||
+                                                destPath->objType == UNKNOWN_FILE_T ||
+                                                rodsPathInp->srcPath->objType == UNKNOWN_OBJ_T ||
+                                                rodsPathInp->srcPath->objType == UNKNOWN_FILE_T;
+            const bool is_both_types_data_or_file = ( destPath->objType == DATA_OBJ_T ||
+                                                      destPath->objType == LOCAL_FILE_T ) &&
+                                                    ( rodsPathInp->srcPath->objType == DATA_OBJ_T ||
+                                                      rodsPathInp->srcPath->objType == LOCAL_FILE_T );
+            const bool is_both_types_coll_or_dir = ( destPath->objType == COLL_OBJ_T ||
+                                                     destPath->objType == LOCAL_DIR_T ) &&
+                                                   ( rodsPathInp->srcPath->objType == COLL_OBJ_T ||
+                                                     rodsPathInp->srcPath->objType == LOCAL_DIR_T );
+            const bool cond1 = is_single_source &&
+                               ( is_either_type_unknown ||
+                                 is_both_types_data_or_file ||
+                                 is_both_types_coll_or_dir );
+
+            const bool cond2 = rodsPathInp->numSrc > 1 && // multiple source
+                               ( oprType == PUT_OPR || // put or get opr
+                                 oprType == RSYNC_OPR );
+
+            if ( cond1 || cond2 ) {
+                rodsPath_t parentPath{};
+
+                status = getPathParent( conn, destPath, &parentPath );
+                if ( status < 0 ) {
+                    rodsLogError( LOG_ERROR, status,
+                                  "resolveRodsTarget: getPathParent error, status = %d", status );
+                    firstErrCode = firstErrCode == 0 ? status : firstErrCode;
+                }
+                else if ( parentPath.objState == EXIST_ST ) {
+                    do_err = false;
+                }
+            }
+
+            if (do_err) {
+                rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
+                              "resolveRodsTarget: target %s does not exist",
+                              destPath->outPath );
+                firstErrCode = firstErrCode == 0 ? USER_FILE_DOES_NOT_EXIST : firstErrCode;
+            }
+        }
+
+        // deal with unknown dest type
+        if ( destPath->objType == UNKNOWN_OBJ_T ||
+             destPath->objType == UNKNOWN_FILE_T ) {
+            // we don't know what dest is supposed to be, so we take our best guess
+
+            // if dest size != 0, panic
+            if ( destPath->size != 0 ) {
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: dest %s is unknown type but has nonzero size of %lld",
+                         destPath->outPath, destPath->size );
+            }
+
+            if ( rodsPathInp->numSrc == 1 ) {
+                // single source
+                // there is a good chance dest is similar type as the source
+
+                if ( rodsPathInp->srcPath->objType == DATA_OBJ_T ||
+                     rodsPathInp->srcPath->objType == LOCAL_FILE_T ) {
+                    // src is data/file type
+
+                    destPath->objType = destPath->objType <= COLL_OBJ_T ? DATA_OBJ_T : LOCAL_FILE_T;
+                }
+                else if ( rodsPathInp->srcPath->objType == COLL_OBJ_T ||
+                          rodsPathInp->srcPath->objType == LOCAL_DIR_T ) {
+                    // src is coll/dir type
+
+                    destPath->objType = destPath->objType <= COLL_OBJ_T ? COLL_OBJ_T : LOCAL_DIR_T;
+                }
+
+                // use size to mark dest type as guessed, for later use
+                destPath->size = destPath->size == 0 ? -1 : destPath->size;
+
+            }
+            else if ( rodsPathInp->numSrc > 1 ) {
+                // multiple sources
+                // there is a good chance dest is coll/dir type
+
+                destPath->objType = destPath->objType <= COLL_OBJ_T ? COLL_OBJ_T : LOCAL_DIR_T;
+
+                // use size to mark dest type as guessed, for later use
+                destPath->size = destPath->size == 0 ? -1 : destPath->size;
+            }
+        }
+
+    }
+
+    // populate targets
+    for ( srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
+        srcPath = &rodsPathInp->srcPath[srcInx];
+        targPath = &rodsPathInp->targPath[srcInx];
+
+        if ( srcPath->objState == NOT_EXIST_ST ) {
+            // src not found
+
+            rodsLog( LOG_ERROR,
+                     "resolveRodsTarget: srcPath %s does not exist",
+                     srcPath->outPath );
+            firstErrCode = firstErrCode == 0 ? USER_INPUT_PATH_ERR : firstErrCode;
+        }
+
+        if ( destStdout ) {
+            // pipe to stdout
+
+            if ( srcPath->objType != DATA_OBJ_T ) {
+                // source must be data object
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: src %s is the wrong type for dest -",
+                         srcPath->outPath );
+                firstErrCode = firstErrCode == 0 ? USER_INPUT_PATH_ERR : firstErrCode;
+            }
+
+            *targPath = *destPath;
+            targPath->objType = LOCAL_FILE_T;
+        }
+        else if ( srcPath->objType == DATA_OBJ_T ||
+                  srcPath->objType == LOCAL_FILE_T ) {
+            // file type source
+            const objType_t targType = ( destPath->objType <= COLL_OBJ_T ) ? DATA_OBJ_T : LOCAL_FILE_T;
+
+
+            if ( destPath->objType == COLL_OBJ_T ||
+                 destPath->objType == LOCAL_DIR_T ) {
+                // directory type destination
+
+                targPath->objType = targType;
+
+                // target should have full path of destination file
+                getLastPathElement( srcPath->inPath, srcElement );
+                if ( strlen( srcElement ) > 0 ) {
+                    // should we use path::preferred_separator instead of '/'?
+                    snprintf( targPath->outPath, MAX_NAME_LEN, "%s/%s",
+                              destPath->outPath, srcElement );
+                    if ( destPath->objType <= COLL_OBJ_T ) {
+                        getRodsObjType( conn, targPath );
+                    }
+                    else {
+                        //targPath->objType = UNKNOWN_FILE_T;
+                        getFileType(targPath);
+                    }
+
+                    // from pre-overhaul's resolveRodsTarget
+                    // seems useless since we already called this for dest before
+                    //if ( destPath->objType <= COLL_OBJ_T ) {
+                    //    getRodsObjType( conn, destPath );
+                    //}
+                }
+                else {
+                    // last path element of src has len == 0???
+                    // ????????
+                    // pre-overhaul copies path
+                    rstrcpy( targPath->outPath, destPath->outPath,
+                             MAX_NAME_LEN );
+                    // our addition:
+                    targPath->objType = destPath->objType;
+                    targPath->objState = destPath->objState;
+                    // not sure how we get here or what the desired outcome is
+                }
+
+            }
+            else if ( destPath->objType == DATA_OBJ_T ||
+                      destPath->objType == LOCAL_FILE_T ) {
+                // file type destination
+
+                *targPath = *destPath;
+                targPath->objType = targType;
+
+            }
+            else {
+                // unknown type destination
+
+                //*/
+                rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
+                              "resolveRodsTarget: target %s does not exist",
+                              destPath->outPath );
+                firstErrCode = firstErrCode == 0 ? USER_FILE_DOES_NOT_EXIST : firstErrCode;
+                continue;
+                /*/
+                if (rodsPathInp->numSrc == 1) {
+                    // single source, dest probably contains new name
+                    // assume destination is similar type to src
+                    *targPath = *destPath;
+                    targPath->objType = targType;
+                }
+                else if ( rodsPathInp->numSrc > 1 &&
+                          ( oprType == PUT_OPR ||
+                            oprType == RSYNC_OPR ) ) {
+                    // multiple sources, opr is put or rsync
+                    // assume destination is dir/coll
+                    targPath->objType = targType;
+
+                    // target should have full path of destination file
+                    getLastPathElement( srcPath->inPath, srcElement );
+                    if ( strlen( srcElement ) > 0 ) {
+                        // should we use path::preferred_separator instead of '/'?
+                        snprintf( targPath->outPath, MAX_NAME_LEN, "%s/%s",
+                                  destPath->outPath, srcElement );
+                        if ( destPath->objType <= COLL_OBJ_T ) {
+                            getRodsObjType( conn, targPath );
+                        }
+                        else {
+                            //targPath->objType = UNKNOWN_FILE_T;
+                            getFileType(targPath);
+                        }
+                    }
+                    else {
+                        // last path element of src has len == 0???
+                        // ????????
+                        // pre-overhaul copies path
+                        rstrcpy( targPath->outPath, destPath->outPath,
+                                 MAX_NAME_LEN );
+                        // our addition:
+                        targPath->objState = destPath->objState;
+                        // not sure how we get here or what the desired outcome is
+                    }
+                }
+                //*/
+            }
+
+        }
+        else if ( srcPath->objType == COLL_OBJ_T ||
+                  srcPath->objType == LOCAL_DIR_T ) {
+            // directory type source
+
+            const objType_t targType = ( destPath->objType <= COLL_OBJ_T ) ? COLL_OBJ_T : LOCAL_DIR_T;
+
+            targPath->objType = targType;
+
+            if ( destPath->objType == DATA_OBJ_T ||
+                 destPath->objType == LOCAL_FILE_T ) {
+                // TODO: if dest was guessed, mention in log
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: input destPath %s is a datapath",
+                         destPath->outPath );
+                firstErrCode = firstErrCode == 0 ? USER_INPUT_PATH_ERR : firstErrCode;
+                continue;
+            }
+            else if ( destPath->objType == COLL_OBJ_T ||
+                      destPath->objType == LOCAL_DIR_T ) {
+
+                if ( destPath->objState == EXIST_ST ||
+                     rodsPathInp->numSrc > 1 ) {
+                    // this is more or less the same as 4.2.8, just no mkdir/mkcoll
+                    getLastPathElement( srcPath->inPath, srcElement );
+                    if ( strlen( srcElement ) > 0 ) {
+                        if ( rodsPathInp->numSrc == 1 && oprType == RSYNC_OPR ) {
+                            getLastPathElement( destPath->inPath, destElement );
+                            // rsync: just use the same path
+                            if ( strlen( destElement ) > 0 ) {
+                                rstrcpy( targPath->outPath, destPath->outPath,
+                                         MAX_NAME_LEN );
+                            }
+                        }
+                    }
+                    if ( targPath->outPath[0] == '\0' ) {
+                        snprintf( targPath->outPath, MAX_NAME_LEN, "%s/%s",
+                                  destPath->outPath, srcElement );
+                    }
+                }
+                else {
+                    rstrcpy( targPath->outPath, destPath->outPath,
+                             MAX_NAME_LEN );
+                }
+            }
+            else {
+                // unknown type destination
+                rodsLogError( LOG_ERROR, USER_FILE_DOES_NOT_EXIST,
+                              "resolveRodsTarget: target %s does not exist",
+                              destPath->outPath );
+                firstErrCode = firstErrCode == 0 ? USER_FILE_DOES_NOT_EXIST : firstErrCode;
+                continue;
+            }
+        }
+        else {
+            // if we wind up here, something's gone sideways
+            if ( srcPath->objState == NOT_EXIST_ST ) {
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: source %s does not exist",
+                         srcPath->outPath );
+            }
+            else {
+                rodsLog( LOG_ERROR,
+                         "resolveRodsTarget: cannot handle objType %d for srcPath %s",
+                         srcPath->objType, srcPath->outPath );
+            }
+            firstErrCode = firstErrCode == 0 ? USER_INPUT_PATH_ERR : firstErrCode;
+        }
+    }
+    return firstErrCode;
+}
+
+int
+prepareRodsTarget_new( rcComm_t *conn, rodsPathInp_t *rodsPathInp, int oprType ) {
+    rodsPath_t *srcPath, *destPath, *targPath;
+    int status;
+
+    if ( rodsPathInp == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "prepareRodsTarget: NULL rodsPathInp input" );
+        return USER__NULL_INPUT_ERR;
+    }
+
+    if ( rodsPathInp->srcPath == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "prepareRodsTarget: NULL rodsPathInp->srcPath input" );
+        return USER__NULL_INPUT_ERR;
+    }
+
+    if ( rodsPathInp->destPath == NULL ) {
+        rodsLog( LOG_ERROR,
+                 "prepareRodsTarget: NULL rodsPathInp->destPath input" );
+        return USER__NULL_INPUT_ERR;
+    }
+
+    status = resolveRodsTarget_new(conn, rodsPathInp, oprType);
+    if (status < 0) {
+        rodsLogError( LOG_ERROR, status,
+                      "prepareRodsTarget: resolveRodsRodsTarget error, status = %d", status );
+        return status;
+    }
+
+    destPath = rodsPathInp->destPath;
+
+    // first, make destination collection/directory if one of these conditions
+    // is met:
+    // 1. single collection/directory type source, dest is path to *new*
+    //    collection/directory inside already existing collection/directory,
+    //    opr is NOT copy or move, targ path is equivalent to dest path
+    //    (coll/dir full path with new name)
+    // 2. multiple sources, opr is put or rsync, dest is new
+    //    collection/directory inside already existing collection/directory
+    //    (#3997?)
+    // then, make target collection/directory if one of the following
+    // conditions is met:
+    // 1. single collection/directory source, target parent
+    //    collection/directory exists, opr is NOT copy or move
+    // 2. multiple sources, destination colleciton/directory exists, opr is
+    //    NOT copy or move, target is collection/directory
+    //    (#4057?)
+    // if any colls/dirs were created, re-run resolveRodsTarget
+
+    bool reresolve = false;
+
+    if ( rodsPathInp->numSrc == 1 &&
+         oprType != MOVE_OPR &&
+         oprType != COPY_DEST &&
+         ( rodsPathInp->srcPath->objType == COLL_OBJ_T ||
+           rodsPathInp->srcPath->objType == LOCAL_DIR_T ) ) {
+        // single coll/dir type source, opr is not move or copy
+
+        targPath = rodsPathInp->targPath;
+
+        if ( destPath->objState != EXIST_ST &&
+             strcmp( destPath->outPath, targPath->outPath ) == 0 ) {
+            // dest does not exist, targ == dest
+            // TODO: what if dest xor targ is relative?
+
+            rodsPath_t parentPath{};
+            status = getPathParent( conn, destPath, &parentPath );
+            if ( status < 0 ) {
+                rodsLogError( LOG_ERROR, status,
+                              "resolveRodsTarget: getPathParent error, status = %d", status );
+                return status;
+            }
+
+            if ( ( parentPath.objType == COLL_OBJ_T ||
+                   parentPath.objType == LOCAL_DIR_T ) &&
+                 parentPath.objState == EXIST_ST ) {
+                // dest parent is existing coll/dir
+
+                if ( destPath->objType <= COLL_OBJ_T ) {
+                    status = mkColl( conn, destPath->outPath );
+                    if ( status < 0 ) {
+                        rodsLog( LOG_ERROR,
+                                 "prepareRodsTarget: Could not create collection %s", destPath->outPath );
+                        return status;
+                    }
+                    getRodsObjType( conn, destPath );
+                    getRodsObjType( conn, targPath );
+                }
+                else {
+                    status = rodsTarg_mkdir( destPath->outPath, 0750 );
+                    if ( status < 0 ) {
+                        // should we get errno instead?
+                        rodsLog( LOG_ERROR,
+                                 "prepareRodsTarget: Could not create directory %s", destPath->outPath );
+                        return status;
+                    }
+                    getFileType( destPath );
+                    getFileType( targPath );
+                }
+                reresolve = true;
+
+            }
+
+        }
+        else if ( destPath->objState == EXIST_ST &&
+                  targPath->objState != EXIST_ST ) {
+            // targ does not exist, but dest does.
+            // we can reasonably assume dest is parent of targ
+
+            // TODO: do we still need to do this?
+
+            if ( destPath->objType <= COLL_OBJ_T ) {
+                status = mkColl( conn, targPath->outPath );
+                if ( status < 0 ) {
+                    rodsLog( LOG_ERROR,
+                             "prepareRodsTarget: Could not create collection %s", targPath->outPath );
+                    return status;
+                }
+                getRodsObjType( conn, targPath );
+            }
+            else {
+                status = rodsTarg_mkdir( targPath->outPath, 0750 );
+                if ( status < 0 ) {
+                    // should we get errno instead?
+                    rodsLog( LOG_ERROR,
+                             "prepareRodsTarget: Could not create directory %s", targPath->outPath );
+                    return status;
+                }
+                getFileType( targPath );
+            }
+            reresolve = true;
+
+        }
+
+    }
+    else if ( rodsPathInp->numSrc > 1 ) {
+        // multiple sources
+
+        if ( ( oprType == PUT_OPR ||
+               oprType == RSYNC_OPR ) &&
+             destPath->objState != EXIST_ST ) {
+            // opr is put or rsync, dest does not exist
+
+            rodsPath_t parentPath{};
+            status = getPathParent( conn, destPath, &parentPath );
+            if ( status < 0 ) {
+                rodsLogError( LOG_ERROR, status,
+                              "resolveRodsTarget: getPathParent error, status = %d", status );
+                return status;
+            }
+
+            if ( ( parentPath.objType == COLL_OBJ_T ||
+                   parentPath.objType == LOCAL_DIR_T ) &&
+                 parentPath.objState == EXIST_ST ) {
+                // dest parent is existing coll/dir
+
+                if ( destPath->objType <= COLL_OBJ_T ) {
+                    status = mkColl( conn, destPath->outPath );
+                    if ( status < 0 ) {
+                        rodsLog( LOG_ERROR,
+                                 "prepareRodsTarget: Could not create collection %s", destPath->outPath );
+                        return status;
+                    }
+                    getRodsObjType( conn, destPath );
+                }
+                else {
+                    status = rodsTarg_mkdir( destPath->outPath, 0750 );
+                    if ( status < 0 ) {
+                        // should we get errno instead?
+                        rodsLog( LOG_ERROR,
+                                 "prepareRodsTarget: Could not create directory %s", destPath->outPath );
+                        return status;
+                    }
+                    getFileType( destPath );
+                }
+                reresolve = true;
+
+            }
+
+        }
+
+        // not else if, coll/dir created in previous step is valid
+        if ( oprType != MOVE_OPR &&
+             oprType != COPY_DEST &&
+             destPath->objState == EXIST_ST ) {
+            // opr is not move or copy, dest does exist
+
+            // TODO: do we still need to do this?
+
+            for ( int srcInx = 0; srcInx < rodsPathInp->numSrc; srcInx++ ) {
+                srcPath = &rodsPathInp->srcPath[srcInx];
+                targPath = &rodsPathInp->targPath[srcInx];
+
+                if ( ( srcPath->objType == COLL_OBJ_T ||
+                       srcPath->objType == LOCAL_DIR_T ) &&
+                     targPath->objState != EXIST_ST ) {
+                    // src is coll/dir, targ does not exist
+
+                    if ( destPath->objType <= COLL_OBJ_T ) {
+                        status = mkColl( conn, targPath->outPath );
+                        if ( status < 0 ) {
+                            rodsLog( LOG_ERROR,
+                                     "prepareRodsTarget: Could not create collection %s", targPath->outPath );
+                            return status;
+                        }
+                        getRodsObjType( conn, targPath );
+                    }
+                    else {
+                        status = rodsTarg_mkdir( targPath->outPath, 0750 );
+                        if ( status < 0 ) {
+                            // should we get errno instead?
+                            rodsLog( LOG_ERROR,
+                                     "prepareRodsTarget: Could not create directory %s", targPath->outPath );
+                            return status;
+                        }
+                        getFileType( targPath );
+                    }
+                    reresolve = true;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    if ( reresolve ) {
+        status = resolveRodsTarget_new(conn, rodsPathInp, oprType);
+        if (status < 0) {
+            rodsLogError( LOG_ERROR, status,
+                          "prepareRodsTarget: resolveRodsRodsTarget error, status = %d", status );
+            return status;
+        }
+    }
+
     return 0;
 }

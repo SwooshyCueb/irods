@@ -19,10 +19,10 @@ mvUtil( rcComm_t *conn, rodsArguments_t *myRodsArgs, rodsPathInp_t *rodsPathInp 
     dataObjCopyInp_t dataObjRenameInp;
     initCondForMv( &dataObjRenameInp );
 
-    int savedStatus = resolveRodsTarget( conn, rodsPathInp, MOVE_OPR );
+    int savedStatus = prepareRodsTarget( conn, rodsPathInp, MOVE_OPR );
     if ( savedStatus < 0 ) {
         rodsLogError( LOG_ERROR, savedStatus,
-                      "mvUtil: resolveRodsTarget error, status = %d", savedStatus );
+                      "mvUtil: prepareRodsTarget error, status = %d", savedStatus );
         return savedStatus;
     }
 

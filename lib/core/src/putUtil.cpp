@@ -202,10 +202,10 @@ putUtil( rcComm_t **myConn, rodsEnv *myRodsEnv,
     }
 
     if ( rodsPathInp->resolved == False ) {
-        status = resolveRodsTarget( conn, rodsPathInp, PUT_OPR );
+        status = prepareRodsTarget( conn, rodsPathInp, PUT_OPR );
         if ( status < 0 ) {
             rodsLogError( LOG_ERROR, status,
-                          "putUtil: resolveRodsTarget error, status = %d", status );
+                          "putUtil: prepareRodsTarget error, status = %d", status );
             return status;
         }
         rodsPathInp->resolved = True;

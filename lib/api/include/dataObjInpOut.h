@@ -26,6 +26,19 @@
 #define pthread_attr_default NULL
 #endif  /* aix_platform */
 
+/**
+ * \struct portList_t
+ *
+ * \ingroup capi_input_data_structures
+ *
+ * \var portList_t::portNum;
+ *   The port number.
+ * \var portList_t::cookie;
+ * \var portList_t::sock
+ *   The server's sock number. No meaning for client.
+ * \var portList_t::windowSize
+ * \var portList_t::hostAddr
+ */
 typedef struct {
     int portNum;       /* the port number */
     int cookie;
@@ -35,80 +48,79 @@ typedef struct {
 } portList_t;
 
 /**
- * \var dataObjInp_t
+ * \struct dataObjInp_t
  * \brief Input struct for Data object operation
  * \since 1.0
  *
  * \ingroup capi_input_data_structures
  *
- * \remark none
- *
- * \note
- * Elements of dataObjInp_t:
- * \li char objPath[MAX_NAME_LEN] - full path of the data object.
- * \li int createMode - the file mode of the data object.
- * \li int openFlags - the flags for the I/O operation,
- *      Valid flags are O_RDONLY, O_WRONLY, O_RDWR and O_TRUNC.
- *      Also used for specCollInx in rcQuerySpecColl.
- * \li rodsLong_t offset - the offset.
- * \li rodsLong_t dataSize - the size of the data object.
- * \li int numThreads - the number of threads to use.
- * \li int oprType - the type of operation.
- * \li specColl_t *specColl - a pointer to a specColl_t if this path is
- *      in a special collection (e.g. mounted collection).
- * \li keyValPair_t condInput -  keyword/value pair input. Valid keywords
- *      depend on the API.
- *
- * \sa none
+ * \var dataObjInp_t::objPath
+ *   Full path of the data object.
+ * \var dataObjInp_t::createMode
+ *   The file mode of the data object.
+ * \var dataObjInp_t::openFlags
+ *   The flags for the I/O operation. Valid flags are \c O_RDONLY,
+ *   \c O_WRONLY, \c O_RDWR and \c O_TRUNC. Also used for \c specCollInx
+ *   in rcQuerySpecColl.
+ * \var dataObjInp_t::offset
+ * \var dataObjInp_t::dataSize
+ *   The size of the data object.
+ * \var dataObjInp_t::numThreads
+ *   The number of threads to use.
+ * \var dataObjInp_t::oprType
+ *   The type of operation.
+ * \var dataObjInp_t::specColl
+ *   T pointer to a specColl_t if this path is in a special collection
+ *   (e.g. mounted collection).
+ * \li dataObjInp_t::condInput
+ *   Keyword/value pair input. Valid keywords depend on the API. Include
+ *   \c cksum flag and value.
  */
-
 typedef struct DataObjInp {
     char objPath[MAX_NAME_LEN];
     int createMode;
-    int openFlags;      /* used for specCollInx in rcQuerySpecColl */
+    int openFlags;
     rodsLong_t offset;
     rodsLong_t dataSize;
     int numThreads;
     int oprType;
     specColl_t *specColl;
-    keyValPair_t condInput;   /* include chksum flag and value */
+    keyValPair_t condInput;
 } dataObjInp_t;
 
 /**
- * \var openedDataObjInp_t
+ * \struct openedDataObjInp_t
  * \brief Input struct for Opened data object operation
  * \since 1.0
  *
  * \ingroup capi_input_data_structures
  *
- * \remark none
- *
- * \note
- * Elements of openedDataObjInp_t:
- * \li int l1descInx - the opened data object descriptor from rcDataObjOpen
- *        or rcDataObjCreate
- * \li int len - the length (number of bytes) to read/write.
- * \li int whence - valid only for rcDataObjLseek (similar to lseek of UNIX).
- *      Valid values are SEEK_SET, SEEK_CUR and SEEK_END.
- * \li int oprType - The operation type. Valid values are - PUT_OPR, GET_OPR,
- *      REPLICATE_OPR, ... See dataObjInpOut.h for more.
- * \li rodsLong_t offset - the offset.
- * \li rodsLong_t bytesWritten - Number of bytes written (valid for
- *      rcDataObjClose).
- * \li keyValPair_t condInput -  keyword/value pair input. Valid keywords
- *      depend on the API.
- *
- * \sa none
+ * \var openedDataObjInp_t::l1descInx
+ *   The opened data object descriptor from rcDataObjOpen or rcDataObjCreate.
+ *   For read, write, and close.
+ * \var openedDataObjInp_t::len
+ *   The length (number of bytes) to read/write.
+ * \var openedDataObjInp_t::whence
+ *   Valid only for rcDataObjLseek (similar to \c lseek of UNIX). Valid values
+ *   are \c SEEK_SET, \c SEEK_CUR and \c SEEK_END.
+ * \var openedDataObjInp_t::oprType
+ *   The operation type. Valid values are PUT_OPR, GET_OPR,  REPLICATE_OPR.
+ *   See dataObjInpOut.h for more.
+ * \var openedDataObjInp_t::offset
+ * \var openedDataObjInp_t::bytesWritten
+ *   Number of bytes written (valid for rcDataObjClose).
+ * \var openedDataObjInp_t::condInput
+ *   Keyword/value pair input. Valid keywords depend on the API. Include
+ *   \c cksum flag and value.
  */
-
 typedef struct OpenedDataObjInp {
-    int l1descInx;              /* for read, write, close */
-    int len;                    /* length of operation for read, write */
-    int whence;                 /* used for lseek */
+    int l1descInx;
+    int len;
+    int whence;
     int oprType;
     rodsLong_t offset;
-    rodsLong_t bytesWritten;    /* for close */
-    keyValPair_t condInput;   /* include chksum flag and value */
+    rodsLong_t bytesWritten;
+    keyValPair_t condInput;
 } openedDataObjInp_t;
 
 typedef struct portalOprOut {
@@ -135,25 +147,23 @@ typedef struct DataOprInp {
 } dataOprInp_t;
 
 /**
- * \var collInp_t
+ * \struct collInp_t
  * \brief Input struct for collection operation
  * \since 1.0
  *
  * \ingroup capi_input_data_structures
  *
- * \remark none
- *
  * \note
  * Elements of collInp_t:
- * \li char collName[MAX_NAME_LEN] - full path of the collection.
- * \li int flags - Flags. Used only by rcOpenCollection.
- * \li int oprType - operation type. not used.
- * \li keyValPair_t condInput -  keyword/value pair input. Valid keywords
- *      depend on the API.
- *
- * \sa none
+ * \var collInp_t::collName
+ *   Full path of the collection.
+ * \var collInp_t::flags
+ *   Flags for rcOpenCollection.
+ * \var collInp_t::oprType
+ *   Operation type. Not used?
+ * \var collInp_t::condInput
+ *   Keyword/value pair input. Valid keywords depend on the API.
  */
-
 typedef struct CollInp {
     char collName[MAX_NAME_LEN];
     int flags;
@@ -161,8 +171,11 @@ typedef struct CollInp {
     keyValPair_t condInput;
 } collInp_t;
 
-/* definition for oprType in dataObjInp_t, portalOpr_t and l1desc_t */
-
+/**
+ * \defgroup oprType_defs
+ * Definitions for oprType in dataObjInp_t, portalOpr_t and l1desc_t.
+ * \{
+ */
 #define DONE_OPR                9999
 #define PUT_OPR                 1
 #define GET_OPR                 2
@@ -188,22 +201,43 @@ typedef struct CollInp {
 #define RENAME_UNKNOWN_TYPE     22
 #define REMOTE_ZONE_OPR         24
 #define UNREG_OPR               26
+/** \} */
 
-/* definition for openType in l1desc_t */
+/**
+ * \defgroup openType_defs
+ * Definitions for openType in l1desc_t.
+ * \{
+ */
 #define CREATE_TYPE             1
 #define OPEN_FOR_READ_TYPE      2
 #define OPEN_FOR_WRITE_TYPE     3
+/** \} */
 
+/**
+ * \struct portalOpr_t
+ *
+ * \ingroup capi_input_data_structures
+ *
+ * \var portalOpr_t::oprType
+ * \var portalOpr_t::dataOprInp
+ * \var portalOpr_t::portList
+ * \var portalOpr_t::shared_secret
+ *   Shared secret for encryption
+ */
 typedef struct PortalOpr {
     int oprType;
     dataOprInp_t dataOprInp;
     portList_t portList;
-    char shared_secret[ NAME_LEN ]; // shared secret for encryption
+    char shared_secret[ NAME_LEN ];
 } portalOpr_t;
 
-/* definition for flags */
+/**
+ * \defgroup transfer_flag_defs
+ * \{
+ */
 #define STREAMING_FLAG          0x1
 #define NO_CHK_COPY_LEN_FLAG    0x2
+/** \} */
 
 typedef struct TransferHeader {
     int oprType;
