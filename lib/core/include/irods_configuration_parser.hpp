@@ -16,8 +16,6 @@
 #include <boost/any.hpp>
 #include <boost/optional.hpp>
 
-#include "json.hpp"
-
 namespace irods {
 
     class configuration_parser {
@@ -137,8 +135,6 @@ namespace irods {
         private:
             error load_json_object(
                 const std::string& ); // file name
-
-            boost::any convert_json(const nlohmann::json&);
 
             error copy_and_swap(
                 const std::unordered_map<std::string, boost::any>& );    // object to swap in

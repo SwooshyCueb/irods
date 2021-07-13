@@ -9,10 +9,58 @@
 #include <boost/filesystem.hpp>
 #include <boost/any.hpp>
 
+#include "json.hpp"
+
 namespace fs = boost::filesystem;
 using json = nlohmann::json;
 
 namespace irods {
+
+    static boost::any convert_json(const json& _json)
+    {
+        switch (_json.type()) {
+            case json::value_t::string:
+                return _json.get<std::string>();
+
+            case json::value_t::number_float:
+                return _json.get<double>();
+
+            case json::value_t::number_integer:
+            case json::value_t::number_unsigned:
+                return _json.get<int>();
+
+            case json::value_t::boolean:
+                return _json.get<bool>();
+
+            case json::value_t::array: {
+                std::vector<boost::any> array;
+
+                for (auto&& jj : _json) {
+                    array.push_back(convert_json(jj));
+                }
+
+                return array;
+            }
+
+            case json::value_t::object: {
+                std::unordered_map<std::string, boost::any> object;
+
+                //for (auto&& [k, v] : j.items()) { // Supported in later versions :(
+                for (auto it = std::begin(_json); it != std::end(_json); ++it) {
+                    object.insert({it.key(), convert_json(it.value())});
+                }
+
+                return object;
+            }
+
+            case json::value_t::null:
+                return std::string{"NULL"};
+
+            default:
+                const auto type = static_cast<std::uint8_t>(_json.type());
+                THROW(-1, (boost::format("unhandled type in json_typeof: %d") % type));
+        }
+    } // parse_json_object
 
     configuration_parser::configuration_parser() {
 
@@ -121,52 +169,6 @@ namespace irods {
         return ret;
 
     } // load_json_object
-
-    boost::any configuration_parser::convert_json(const json& _json)
-    {
-        switch (_json.type()) {
-            case json::value_t::string:
-                return _json.get<std::string>();
-
-            case json::value_t::number_float:
-                return _json.get<double>();
-
-            case json::value_t::number_integer:
-            case json::value_t::number_unsigned:
-                return _json.get<int>();
-
-            case json::value_t::boolean:
-                return _json.get<bool>();
-
-            case json::value_t::array: {
-                std::vector<boost::any> array;
-
-                for (auto&& jj : _json) {
-                    array.push_back(convert_json(jj));
-                }
-
-                return array;
-            }
-
-            case json::value_t::object: {
-                std::unordered_map<std::string, boost::any> object;
-
-                //for (auto&& [k, v] : j.items()) { // Supported in later versions :(
-                for (auto it = std::begin(_json); it != std::end(_json); ++it) {
-                    object.insert({it.key(), convert_json(it.value())});
-                }
-
-                return object;
-            }
-
-            case json::value_t::null:
-                return std::string{"NULL"};
-
-            default:
-                const auto type = static_cast<std::uint8_t>(_json.type());
-                THROW(-1, (boost::format("unhandled type in json_typeof: %d") % type));
-        }
-    } // parse_json_object
 
     std::string to_env(
         const std::string& _v ) {
