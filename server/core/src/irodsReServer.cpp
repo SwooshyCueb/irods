@@ -82,12 +82,12 @@ namespace {
     /// \param[in] user The name of the user to proxy into
     ix::client_connection get_new_connection(const std::optional<std::string>& _user){
         static std::atomic<int> host_index = 0;
-        static auto &delay_rule_executors = irods::get_advanced_setting<std::vector<boost::any>&>(irods::DELAY_RULE_EXECUTORS_KW);
+        static auto delay_rule_executors = irods::get_advanced_setting<nlohmann::json>(irods::DELAY_RULE_EXECUTORS_KW);
         if(_user.has_value() && !delay_rule_executors.empty() ){
             rodsEnv env{};
             _getRodsEnv(env);
             const int cur = (host_index++) % delay_rule_executors.size();
-            const auto &host = boost::any_cast<std::string&>(delay_rule_executors[cur]);
+            const auto &host = delay_rule_executors[cur].get<std::string>();
             logger::delay_server::debug("Sending rule to {}, Using proxy user {} for implicit remote (real user {})",  host, _user.value(), env.rodsUserName);
             return ix::client_connection(host,
                                          env.rodsPort,
