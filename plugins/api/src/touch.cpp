@@ -38,7 +38,7 @@
 #include "query_builder.hpp"
 
 #include "fmt/format.h"
-#include "json.hpp"
+#include <nlohmann/json.cpp>
 
 #include <string>
 #include <string_view>

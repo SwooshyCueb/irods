@@ -29,7 +29,7 @@
 #include <boost/function.hpp>
 #include <boost/any.hpp>
 #include <fmt/format.h>
-#include <json.hpp>
+#include <nlohmann/json.cpp>
 
 #include <iostream>
 #include <sstream>

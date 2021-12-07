@@ -7,7 +7,7 @@
 #include "rodsErrorTable.h"
 #include "getRodsEnv.h"
 
-#include "json.hpp"
+#include <nlohmann/json.cpp>
 
 #include <cstdlib>
 #include <string>

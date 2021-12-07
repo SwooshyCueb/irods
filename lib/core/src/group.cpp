@@ -1,6 +1,6 @@
 #include "group.hpp"
 
-#include "json.hpp"
+#include <nlohmann/json.cpp>
 
 using json = nlohmann::json;
 

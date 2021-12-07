@@ -52,7 +52,7 @@
 #include "irods_at_scope_exit.hpp"
 #include "irods_hierarchy_parser.hpp"
 
-#include "json.hpp"
+#include <nlohmann/json.cpp>
 
 #include <cstdlib>
 #include <string>

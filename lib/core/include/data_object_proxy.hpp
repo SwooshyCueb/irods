@@ -10,7 +10,7 @@
 #include <string_view>
 #include <vector>
 
-#include "json.hpp"
+#include <nlohmann/json.cpp>
 
 namespace irods::experimental::data_object
 {

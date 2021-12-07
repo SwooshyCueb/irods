@@ -25,7 +25,7 @@
 
 #include <sys/utsname.h>
 
-#include "json.hpp"
+#include <nlohmann/json.cpp>
 
 using json = nlohmann::json;
 
