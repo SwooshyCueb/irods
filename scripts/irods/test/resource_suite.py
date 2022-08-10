@@ -1167,3 +1167,105 @@ class ResourceSuite(ResourceBase):
 
         # try to trim down to repl_count
         self.admin.assert_icommand("itrim -N {repl_count} {filename}".format(**locals()), 'STDOUT_SINGLELINE', "Total size trimmed = 0.000 MB. Number of files trimmed = 0.")
+
+
+    ###################
+    # detached mode
+    ###################
+    def test_detached_mode(self):
+
+        try:
+            file1 = "f1"
+            file2 = "f2"
+            resource_host = "irods.org"
+            resource_name = 'detached_resource'
+
+            hostuser = getpass.getuser()
+
+            resource_context = 'HOST_MODE=detached'
+            testvault = "/tmp/" + hostuser + "/" + resource_name
+
+            self.admin.assert_icommand("iadmin mkresc %s unixfilesystem %s:/%s %s" %
+                                   (resource_name, resource_host, testvault, resource_context), 'STDOUT_SINGLELINE', "Creating")
+
+            # create file to put
+            lib.make_file(file1, 100)
+
+            # put small file
+            self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1))  # iput
+
+            # get file
+            self.admin.assert_icommand("iget %s %s" % (file1, file2))  # iput
+
+            # make sure the file that was put and got are the same
+            self.admin.assert_icommand("diff %s %s " % (file1, file2), 'EMPTY')
+
+        finally:
+
+            # local cleanup
+            self.admin.assert_icommand("irm -f " + file1, 'EMPTY')
+
+            if os.path.exists(file1):
+                os.unlink(file1)
+            if os.path.exists(file2):
+                os.unlink(file2)
+
+            # cleanup
+            self.admin.assert_icommand("iadmin rmresc %s" % resource_name, 'EMPTY')
+
+    def test_attached_mode_default_setting_invalid_host(self):
+
+        try:
+            file1 = "f1"
+            resource_host = "irods.org"
+            resource_name = 'detached_resource'
+
+            hostuser = getpass.getuser()
+
+            resource_context = 'HOST_MODE=attached'
+            testvault = "/tmp/" + hostuser + "/" + resource_name
+
+            self.admin.assert_icommand("iadmin mkresc %s unixfilesystem %s:/%s %s" %
+                                   (resource_name, resource_host, testvault, resource_context), 'STDOUT_SINGLELINE', "Creating")
+
+            # create file to put
+            lib.make_file(file1, 100)
+
+            # put small file
+            self.admin.assert_icommand_fail("iput -R %s %s" % (resource_name, file1))  # iput
+
+        finally:
+
+            if os.path.exists(file1):
+                os.unlink(file1)
+
+            # cleanup
+            self.admin.assert_icommand("iadmin rmresc %s" % resource_name, 'EMPTY')
+
+    def test_attached_mode_explicit_setting_invalid_host(self):
+
+        try:
+            file1 = "f1"
+            resource_host = "irods.org"
+            resource_name = 'detached_resource'
+
+            hostuser = getpass.getuser()
+
+            testvault = "/tmp/" + hostuser + "/" + resource_name
+
+            self.admin.assert_icommand("iadmin mkresc %s unixfilesystem %s:/%s" %
+                                   (resource_name, resource_host, testvault), 'STDOUT_SINGLELINE', "Creating")
+
+            # create file to put
+            lib.make_file(file1, 100)
+
+            # put small file
+            self.admin.assert_icommand_fail("iput -R %s %s" % (resource_name, file1))  # iput
+
+        finally:
+
+            if os.path.exists(file1):
+                os.unlink(file1)
+
+            # cleanup
+            self.admin.assert_icommand("iadmin rmresc %s" % resource_name, 'EMPTY')

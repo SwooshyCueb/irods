@@ -7,6 +7,7 @@
 
 // =-=-=-=-=-=-=-
 #include "irods/irods_resource_plugin.hpp"
+#include "irods/irods_resource_backport.hpp"
 #include "irods/irods_file_object.hpp"
 #include "irods/irods_physical_object.hpp"
 #include "irods/irods_collection_object.hpp"
@@ -83,6 +84,81 @@
 const std::string DEFAULT_VAULT_DIR_MODE( "default_vault_directory_mode_kw" );
 const std::string HIGH_WATER_MARK( "high_water_mark" ); // no longer used
 const std::string REQUIRED_FREE_INODES_FOR_CREATE("required_free_inodes_for_create"); // no longer used
+const std::string HOST_MODE("HOST_MODE");
+
+bool is_detached_mode(irods::plugin_property_map& prop_map) {
+
+    std::string host_mode_str;
+
+    irods::error ret = prop_map.get< std::string >(HOST_MODE, host_mode_str);
+    if (ret.ok()) {
+
+        if (boost::iequals(host_mode_str.c_str(), "detached"))  {
+            return true;
+        }
+    }
+
+    // default is attached mode
+    return false;
+}
+
+irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map)
+{
+    using logger = irods::experimental::log;
+
+    irods::error ret = SUCCESS();
+
+    bool detached_mode = is_detached_mode(prop_map);
+
+    if (detached_mode) {
+
+        bool error = false;
+
+        // update host to new host
+        char resource_location[MAX_NAME_LEN];
+        gethostname(resource_location, MAX_NAME_LEN);
+
+        std::string resource_name;
+        ret = prop_map.get<std::string>(irods::RESOURCE_NAME, resource_name);
+        if ( !ret.ok() ) {
+
+            resource_name = "";
+            error = true;
+
+        } else {
+
+            rodsLong_t resc_id = 0;
+
+            ret = resc_mgr.hier_to_leaf_id(resource_name, resc_id);
+            if( !ret.ok() ) {
+                error = true;
+            } else {
+
+                rodsServerHost_t *resource_host = nullptr;
+                ret = irods::get_resource_property< rodsServerHost_t*& >(resc_id, irods::RESOURCE_HOST, resource_host);
+
+                if (!ret.ok() || !resource_host) {
+                     error = true;
+                } else {
+                     resource_host->hostName->name = strdup(resource_location);
+                     resource_host->localFlag = LOCAL_HOST;
+                     ret = irods::set_resource_property< rodsServerHost_t* >( resource_name, irods::RESOURCE_HOST, resource_host);
+                     if (!ret.ok()) {
+                         error = true;
+                     }
+                }
+            }
+        }
+
+        if (error) {
+            // log a warning but continue
+            logger::resource::warn("[resource_name={}] Attached mode failed to set RESOURCE_HOST to {}.",
+                    resource_name.c_str(), resource_location);
+        }
+    }
+
+    return ret;
+}
 
 // =-=-=-=-=-=-=-
 // NOTE: All storage resources must do this on the physical path stored in the file object and then update
@@ -1174,6 +1250,8 @@ class unixfilesystem_resource : public irods::resource {
                         itr->first,
                         itr->second );
                 } // for itr
+
+            set_start_operation(unixfilesystem_start_operation);
 
         } // ctor
 
