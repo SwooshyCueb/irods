@@ -1180,13 +1180,11 @@ class ResourceSuite(ResourceBase):
             resource_host = "irods.org"
             resource_name = 'detached_resource'
 
-            hostuser = getpass.getuser()
-
             resource_context = 'HOST_MODE=detached'
-            testvault = "/tmp/" + hostuser + "/" + resource_name
 
-            self.admin.assert_icommand("iadmin mkresc %s unixfilesystem %s:/%s %s" %
-                                   (resource_name, resource_host, testvault, resource_context), 'STDOUT_SINGLELINE', "Creating")
+            lib.create_ufs_resource(resource_name, self.admin, resource_host)
+            self.admin.assert_icommand("iadmin modresc %s context %s" %
+                                   (resource_name, resource_context), 'EMPTY')
 
             # create file to put
             lib.make_file(file1, 100)
@@ -1195,7 +1193,7 @@ class ResourceSuite(ResourceBase):
             self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1))  # iput
 
             # get file
-            self.admin.assert_icommand("iget %s %s" % (file1, file2))  # iput
+            self.admin.assert_icommand("iget %s %s" % (file1, file2))  # iget
 
             # make sure the file that was put and got are the same
             self.admin.assert_icommand("diff %s %s " % (file1, file2), 'EMPTY')
@@ -1211,28 +1209,22 @@ class ResourceSuite(ResourceBase):
                 os.unlink(file2)
 
             # cleanup
-            self.admin.assert_icommand("iadmin rmresc %s" % resource_name, 'EMPTY')
+            lib.remove_resource(resource_name, self.admin)
 
     def test_attached_mode_default_setting_invalid_host(self):
 
         try:
             file1 = "f1"
             resource_host = "irods.org"
-            resource_name = 'detached_resource'
+            resource_name = 'attached_resource'
 
-            hostuser = getpass.getuser()
-
-            resource_context = 'HOST_MODE=attached'
-            testvault = "/tmp/" + hostuser + "/" + resource_name
-
-            self.admin.assert_icommand("iadmin mkresc %s unixfilesystem %s:/%s %s" %
-                                   (resource_name, resource_host, testvault, resource_context), 'STDOUT_SINGLELINE', "Creating")
+            lib.create_ufs_resource(resource_name, self.admin, resource_host)
 
             # create file to put
             lib.make_file(file1, 100)
 
             # put small file
-            self.admin.assert_icommand_fail("iput -R %s %s" % (resource_name, file1))  # iput
+            self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1), 'STDERR', 'USER_SOCK_CONNECT_ERR')  # iput
 
         finally:
 
@@ -1240,27 +1232,26 @@ class ResourceSuite(ResourceBase):
                 os.unlink(file1)
 
             # cleanup
-            self.admin.assert_icommand("iadmin rmresc %s" % resource_name, 'EMPTY')
+            lib.remove_resource(resource_name, self.admin)
 
     def test_attached_mode_explicit_setting_invalid_host(self):
 
         try:
             file1 = "f1"
             resource_host = "irods.org"
-            resource_name = 'detached_resource'
+            resource_name = 'attached_resource'
 
-            hostuser = getpass.getuser()
+            resource_context = 'HOST_MODE=attached'
 
-            testvault = "/tmp/" + hostuser + "/" + resource_name
-
-            self.admin.assert_icommand("iadmin mkresc %s unixfilesystem %s:/%s" %
-                                   (resource_name, resource_host, testvault), 'STDOUT_SINGLELINE', "Creating")
+            lib.create_ufs_resource(resource_name, self.admin, resource_host)
+            self.admin.assert_icommand("iadmin modresc %s context %s" %
+                                   (resource_name, resource_context), 'EMPTY')
 
             # create file to put
             lib.make_file(file1, 100)
 
             # put small file
-            self.admin.assert_icommand_fail("iput -R %s %s" % (resource_name, file1))  # iput
+            self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1), 'STDERR', 'USER_SOCK_CONNECT_ERR')  # iput
 
         finally:
 
@@ -1268,4 +1259,4 @@ class ResourceSuite(ResourceBase):
                 os.unlink(file1)
 
             # cleanup
-            self.admin.assert_icommand("iadmin rmresc %s" % resource_name, 'EMPTY')
+            lib.remove_resource(resource_name, self.admin)
