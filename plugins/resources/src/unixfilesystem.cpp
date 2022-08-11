@@ -122,7 +122,6 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
         ret = prop_map.get<std::string>(irods::RESOURCE_NAME, resource_name);
         if ( !ret.ok() ) {
 
-            resource_name = "";
             error = true;
 
         } else {
