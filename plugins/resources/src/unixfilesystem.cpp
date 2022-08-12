@@ -20,6 +20,7 @@
 #include "irods/irods_kvp_string_parser.hpp"
 #include "irods/irods_logger.hpp"
 #include "irods/voting.hpp"
+#include "irods/filesystem/path.hpp"
 
 // =-=-=-=-=-=-=-
 // stl includes
@@ -27,6 +28,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <tuple>
 
 // =-=-=-=-=-=-=-
 // boost includes
@@ -85,8 +87,10 @@ const std::string DEFAULT_VAULT_DIR_MODE( "default_vault_directory_mode_kw" );
 const std::string HIGH_WATER_MARK( "high_water_mark" ); // no longer used
 const std::string REQUIRED_FREE_INODES_FOR_CREATE("required_free_inodes_for_create"); // no longer used
 const std::string HOST_MODE("HOST_MODE");
+const std::string HOST_LIST("HOST_LIST");
 
-bool is_detached_mode(irods::plugin_property_map& prop_map) {
+bool is_detached_mode(irods::plugin_property_map& prop_map)
+{
 
     std::string host_mode_str;
 
@@ -102,6 +106,91 @@ bool is_detached_mode(irods::plugin_property_map& prop_map) {
     return false;
 }
 
+static std::vector<std::string> split(const std::string str, char delim)
+{
+    std::vector<std::string> result;
+    std::istringstream ss{str};
+    std::string token;
+    while (std::getline(ss, token, delim)) {
+        if (!token.empty()) {
+            result.push_back(token);
+        }
+    }
+    return result;
+}
+
+// returns a tuple with the following:
+//   bool - true iff the resource_hostname is in HOST_LIST string
+//   bool - true iff the vault path should be updated
+//   std::string - the new vault path string if it is to be updated
+std::tuple<bool, bool, std::string> get_detached_mode_vault_path(
+        irods::plugin_property_map& prop_map,
+        const std::string& resource_hostname,
+        const std::string& resource_name)
+{
+    bool in_host_list = false;
+    bool update_vault_path = false;
+    std::string new_vault_path;
+
+    std::string host_list_str;
+
+    irods::error ret = prop_map.get< std::string >(HOST_LIST, host_list_str);
+    if (!ret.ok()) {
+
+        // no HOST_LIST parameter, all hosts assumed to be able to handle request
+        // and original vault path used for all hosts
+        in_host_list = true;
+        update_vault_path = false;
+        return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+    }
+
+    // have a HOST_LIST parameter
+
+    // split parameter by delimiter (,)
+    char delimiter = ',';
+    std::string token;
+
+    std::string resource_hostname_with_colon = resource_hostname + ":";
+    std::string resource_hostname_with_comma = resource_hostname + ",";
+
+    std::vector<std::string> tokens = split(host_list_str, delimiter);
+
+    for (std::string token : tokens) {
+
+
+        // see if this token begins with our resource location but with no path
+        // either this is the last token in the string or the token is followed by a comma
+        if (token == resource_hostname || token.starts_with(resource_hostname_with_comma)) {
+
+            // we have our location but no vault path, in host but do not update vault path
+            in_host_list = true;
+            update_vault_path = false;
+            return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+        }
+
+        if (token.starts_with(resource_hostname_with_colon)) {
+            in_host_list = true;
+            update_vault_path = true;
+            new_vault_path = token.substr(resource_hostname_with_colon.length(), token.find(delimiter));
+
+            // make sure vault path is absolute
+            irods::experimental::filesystem::path p(new_vault_path);
+            if (!p.is_absolute()) {
+                // log a warning but continue
+                logger::resource::warn("[resource_name={}] Detached mode vault path ({}) is not absolute.  Resource will not be considered in the host list.",
+                        resource_name.c_str(), resource_hostname);
+                in_host_list = false;
+                update_vault_path = false;
+
+            }
+            return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+        }
+
+    }
+
+    return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+} // get_detached_mode_vault_path
+
 irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map)
 {
     using logger = irods::experimental::log;
@@ -112,11 +201,14 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
 
     if (detached_mode) {
 
+        bool in_host_list, update_vault_path;
+        std::string new_vault_path;
+
         bool error = false;
 
         // update host to new host
-        char resource_location[MAX_NAME_LEN];
-        gethostname(resource_location, MAX_NAME_LEN);
+        char local_hostname[MAX_NAME_LEN];
+        gethostname(local_hostname, MAX_NAME_LEN);
 
         std::string resource_name;
         ret = prop_map.get<std::string>(irods::RESOURCE_NAME, resource_name);
@@ -126,38 +218,50 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
 
         } else {
 
-            rodsLong_t resc_id = 0;
+            std::tie(in_host_list, update_vault_path, new_vault_path) = get_detached_mode_vault_path(prop_map, local_hostname, resource_name);
 
-            ret = resc_mgr.hier_to_leaf_id(resource_name, resc_id);
-            if( !ret.ok() ) {
-                error = true;
-            } else {
+            if (in_host_list) {
 
-                rodsServerHost_t *resource_host = nullptr;
-                ret = irods::get_resource_property< rodsServerHost_t*& >(resc_id, irods::RESOURCE_HOST, resource_host);
+                rodsLong_t resc_id = 0;
 
-                if (!ret.ok() || !resource_host) {
-                     error = true;
+                ret = resc_mgr.hier_to_leaf_id(resource_name, resc_id);
+                if( !ret.ok() ) {
+                    error = true;
                 } else {
-                     resource_host->hostName->name = strdup(resource_location);
-                     resource_host->localFlag = LOCAL_HOST;
-                     ret = irods::set_resource_property< rodsServerHost_t* >( resource_name, irods::RESOURCE_HOST, resource_host);
-                     if (!ret.ok()) {
-                         error = true;
-                     }
+
+                    rodsServerHost_t *resource_host = nullptr;
+                    ret = irods::get_resource_property< rodsServerHost_t*& >(resc_id, irods::RESOURCE_HOST, resource_host);
+
+                    if (!ret.ok() || !resource_host) {
+                        error = true;
+                    } else {
+                        resource_host->hostName->name = strdup(local_hostname);
+                        resource_host->localFlag = LOCAL_HOST;
+                        ret = irods::set_resource_property< rodsServerHost_t* >( resource_name, irods::RESOURCE_HOST, resource_host);
+                        if (!ret.ok()) {
+                            error = true;
+                        }
+                    }
+
+                    if (!error && update_vault_path) {
+                        ret = irods::set_resource_property< std::string >( resource_name, irods::RESOURCE_PATH, new_vault_path);
+                        if (!ret.ok()) {
+                            error = true;
+                        }
+                    }
                 }
             }
         }
 
         if (error) {
             // log a warning but continue
-            logger::resource::warn("[resource_name={}] Attached mode failed to set RESOURCE_HOST to {}.",
-                    resource_name.c_str(), resource_location);
+            logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}.",
+                    resource_name.c_str(), local_hostname);
         }
     }
 
     return ret;
-}
+} // unixfilesystem_start_operation
 
 // =-=-=-=-=-=-=-
 // NOTE: All storage resources must do this on the physical path stored in the file object and then update
