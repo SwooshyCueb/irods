@@ -75,6 +75,7 @@ set(
   with_durability
   json_apis_from_client
   zone_report
+  test_host_list_context_string
 )
 
 foreach(test IN LISTS IRODS_UNIT_TESTS)

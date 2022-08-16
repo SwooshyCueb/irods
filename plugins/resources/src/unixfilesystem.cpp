@@ -29,6 +29,7 @@
 #include <vector>
 #include <string>
 #include <tuple>
+#include <optional>
 
 // =-=-=-=-=-=-=-
 // boost includes
@@ -121,15 +122,15 @@ static std::vector<std::string> split(const std::string str, char delim)
 
 // returns a tuple with the following:
 //   bool - true iff the resource_hostname is in HOST_LIST string
-//   bool - true iff the vault path should be updated
-//   std::string - the new vault path string if it is to be updated
-std::tuple<bool, bool, std::string> get_detached_mode_vault_path(
+//   std::optional<std::string> - the new vault path if it is defined
+std::tuple<bool, std::optional<std::string>> get_detached_mode_vault_path(
         irods::plugin_property_map& prop_map,
         const std::string& resource_hostname,
         const std::string& resource_name)
 {
+    using logger = irods::experimental::log;
+
     bool in_host_list = false;
-    bool update_vault_path = false;
     std::string new_vault_path;
 
     std::string host_list_str;
@@ -140,8 +141,7 @@ std::tuple<bool, bool, std::string> get_detached_mode_vault_path(
         // no HOST_LIST parameter, all hosts assumed to be able to handle request
         // and original vault path used for all hosts
         in_host_list = true;
-        update_vault_path = false;
-        return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+        return std::make_tuple(in_host_list, std::nullopt);
     }
 
     // have a HOST_LIST parameter
@@ -151,7 +151,6 @@ std::tuple<bool, bool, std::string> get_detached_mode_vault_path(
     std::string token;
 
     std::string resource_hostname_with_colon = resource_hostname + ":";
-    std::string resource_hostname_with_comma = resource_hostname + ",";
 
     std::vector<std::string> tokens = split(host_list_str, delimiter);
 
@@ -159,36 +158,36 @@ std::tuple<bool, bool, std::string> get_detached_mode_vault_path(
 
 
         // see if this token begins with our resource location but with no path
-        // either this is the last token in the string or the token is followed by a comma
-        if (token == resource_hostname || token.starts_with(resource_hostname_with_comma)) {
+        if (token == resource_hostname) {
 
             // we have our location but no vault path, in host but do not update vault path
             in_host_list = true;
-            update_vault_path = false;
-            return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+            return std::make_tuple(in_host_list, std::nullopt);
         }
 
         if (token.starts_with(resource_hostname_with_colon)) {
+
             in_host_list = true;
-            update_vault_path = true;
-            new_vault_path = token.substr(resource_hostname_with_colon.length(), token.find(delimiter));
+            std::string new_vault_path = token.substr(resource_hostname_with_colon.length(), token.find(delimiter));
 
             // make sure vault path is absolute
             irods::experimental::filesystem::path p(new_vault_path);
             if (!p.is_absolute()) {
                 // log a warning but continue
-                logger::resource::warn("[resource_name={}] Detached mode vault path ({}) is not absolute.  Resource will not be considered in the host list.",
-                        resource_name.c_str(), resource_hostname);
+                logger::resource::warn("[resource_name={}] Detached mode vault path ({}) is not absolute.  "
+                        "Resource will not be considered in the host list.",
+                        resource_name, resource_hostname);
                 in_host_list = false;
-                update_vault_path = false;
+                return std::make_tuple(in_host_list, std::nullopt);
 
             }
-            return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+            return std::make_tuple(in_host_list, new_vault_path);
         }
 
     }
 
-    return std::make_tuple(in_host_list, update_vault_path, new_vault_path);
+    return std::make_tuple(in_host_list, std::nullopt);
+
 } // get_detached_mode_vault_path
 
 irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map)
@@ -201,14 +200,20 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
 
     if (detached_mode) {
 
-        bool in_host_list, update_vault_path;
-        std::string new_vault_path;
+        bool in_host_list;
+        std::optional<std::string> new_vault_path_optional;
 
         bool error = false;
 
         // update host to new host
         char local_hostname[MAX_NAME_LEN];
         gethostname(local_hostname, MAX_NAME_LEN);
+
+        auto resource_hostname_optional =
+            resolve_hostname(local_hostname, hostname_resolution_scheme::match_preferred);
+
+        std::string resource_hostname;
+        resource_hostname = resource_hostname_optional ? std::move(*resource_hostname_optional) : local_hostname;
 
         std::string resource_name;
         ret = prop_map.get<std::string>(irods::RESOURCE_NAME, resource_name);
@@ -218,7 +223,8 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
 
         } else {
 
-            std::tie(in_host_list, update_vault_path, new_vault_path) = get_detached_mode_vault_path(prop_map, local_hostname, resource_name);
+            std::tie(in_host_list, new_vault_path_optional) =
+                get_detached_mode_vault_path(prop_map, resource_hostname, resource_name);
 
             if (in_host_list) {
 
@@ -243,8 +249,9 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
                         }
                     }
 
-                    if (!error && update_vault_path) {
-                        ret = irods::set_resource_property< std::string >( resource_name, irods::RESOURCE_PATH, new_vault_path);
+                    if (!error && new_vault_path_optional.has_value()) {
+                        ret = irods::set_resource_property< std::string >(
+                                resource_name, irods::RESOURCE_PATH, new_vault_path_optional.value());
                         if (!ret.ok()) {
                             error = true;
                         }
