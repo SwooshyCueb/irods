@@ -1172,19 +1172,17 @@ class ResourceSuite(ResourceBase):
     ###################
     # detached mode
     ###################
-    def test_detached_mode(self):
-
+    def test_detached_mode__issue_4421(self):
         try:
             file1 = "f1"
             file2 = "f2"
             resource_host = "irods.org"
             resource_name = 'detached_resource'
-
             resource_context = 'HOST_MODE=detached'
 
             lib.create_ufs_resource(resource_name, self.admin, resource_host)
             self.admin.assert_icommand("iadmin modresc %s context %s" %
-                                   (resource_name, resource_context), 'EMPTY')
+                                   (resource_name, resource_context))
 
             # create file to put
             lib.make_file(file1, 100)
@@ -1196,12 +1194,10 @@ class ResourceSuite(ResourceBase):
             self.admin.assert_icommand("iget %s %s" % (file1, file2))  # iget
 
             # make sure the file that was put and got are the same
-            self.admin.assert_icommand("diff %s %s " % (file1, file2), 'EMPTY')
-
+            self.admin.assert_icommand("diff %s %s " % (file1, file2))
         finally:
-
             # local cleanup
-            self.admin.assert_icommand("irm -f " + file1, 'EMPTY')
+            self.admin.assert_icommand("irm -f " + file1)
 
             if os.path.exists(file1):
                 os.unlink(file1)
@@ -1211,8 +1207,7 @@ class ResourceSuite(ResourceBase):
             # cleanup
             lib.remove_resource(resource_name, self.admin)
 
-    def test_detached_mode_vault_path_updated(self):
-
+    def test_detached_mode_vault_path_updated__issue_4421(self):
         try:
             file1 = "f1"
             file2 = "f2"
@@ -1220,12 +1215,11 @@ class ResourceSuite(ResourceBase):
             resource_name = 'detached_resource'
             vault_path = '/tmp/detached_resource'
             hostname = lib.get_hostname()
-
             resource_context = 'HOST_MODE=detached;HOST_LIST=irods.org:/some/path,%s:%s;some_other_host:/some/other/path' % (hostname, vault_path)
 
             lib.create_ufs_resource(resource_name, self.admin, resource_host)
             self.admin.assert_icommand("iadmin modresc %s context %s" %
-                                   (resource_name, resource_context), 'EMPTY')
+                                   (resource_name, resource_context))
 
             # create file to put
             lib.make_file(file1, 100)
@@ -1237,12 +1231,10 @@ class ResourceSuite(ResourceBase):
             self.admin.assert_icommand("iget %s %s" % (file1, file2))  # iget
 
             # make sure the file that was put and got are the same
-            self.admin.assert_icommand("diff %s %s " % (file1, file2), 'EMPTY')
-
+            self.admin.assert_icommand("diff %s %s " % (file1, file2))
         finally:
-
             # local cleanup
-            self.admin.assert_icommand("irm -f " + file1, 'EMPTY')
+            self.admin.assert_icommand("irm -f " + file1)
 
             if os.path.exists(file1):
                 os.unlink(file1)
@@ -1252,20 +1244,18 @@ class ResourceSuite(ResourceBase):
             # cleanup
             lib.remove_resource(resource_name, self.admin)
 
-    def test_detached_mode_use_same_vault_path(self):
-
+    def test_detached_mode_use_same_vault_path__issue_4421(self):
         try:
             file1 = "f1"
             file2 = "f2"
             resource_host = "irods.org"
             resource_name = 'detached_resource'
             hostname = lib.get_hostname()
-
             resource_context = 'HOST_MODE=detached;HOST_LIST=irods.org:/some/path,%s' % hostname
 
             lib.create_ufs_resource(resource_name, self.admin, resource_host)
             self.admin.assert_icommand("iadmin modresc %s context %s" %
-                                   (resource_name, resource_context), 'EMPTY')
+                                   (resource_name, resource_context))
 
             # create file to put
             lib.make_file(file1, 100)
@@ -1277,12 +1267,10 @@ class ResourceSuite(ResourceBase):
             self.admin.assert_icommand("iget %s %s" % (file1, file2))  # iget
 
             # make sure the file that was put and got are the same
-            self.admin.assert_icommand("diff %s %s " % (file1, file2), 'EMPTY')
-
+            self.admin.assert_icommand("diff %s %s " % (file1, file2))
         finally:
-
             # local cleanup
-            self.admin.assert_icommand("irm -f " + file1, 'EMPTY')
+            self.admin.assert_icommand("irm -f " + file1)
 
             if os.path.exists(file1):
                 os.unlink(file1)
@@ -1292,8 +1280,7 @@ class ResourceSuite(ResourceBase):
             # cleanup
             lib.remove_resource(resource_name, self.admin)
 
-    def test_detached_mode_host_not_in_host_list(self):
-
+    def test_detached_mode_host_not_in_host_list__issue_4421(self):
         try:
             file1 = "f1"
             resource_host = "irods.org"
@@ -1302,24 +1289,21 @@ class ResourceSuite(ResourceBase):
 
             lib.create_ufs_resource(resource_name, self.admin, resource_host)
             self.admin.assert_icommand("iadmin modresc %s context %s" %
-                                   (resource_name, resource_context), 'EMPTY')
+                                   (resource_name, resource_context))
 
             # create file to put
             lib.make_file(file1, 100)
 
             # put small file
             self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1), 'STDERR', 'USER_SOCK_CONNECT_ERR')  # iput
-
         finally:
-
             if os.path.exists(file1):
                 os.unlink(file1)
 
             # cleanup
             lib.remove_resource(resource_name, self.admin)
 
-    def test_attached_mode_default_setting_invalid_host(self):
-
+    def test_attached_mode_default_setting_invalid_host__issue_4421(self):
         try:
             file1 = "f1"
             resource_host = "irods.org"
@@ -1332,36 +1316,30 @@ class ResourceSuite(ResourceBase):
 
             # put small file
             self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1), 'STDERR', 'USER_SOCK_CONNECT_ERR')  # iput
-
         finally:
-
             if os.path.exists(file1):
                 os.unlink(file1)
 
             # cleanup
             lib.remove_resource(resource_name, self.admin)
 
-    def test_attached_mode_explicit_setting_invalid_host(self):
-
+    def test_attached_mode_explicit_setting_invalid_host__issue_4421(self):
         try:
             file1 = "f1"
             resource_host = "irods.org"
             resource_name = 'attached_resource'
-
             resource_context = 'HOST_MODE=attached'
 
             lib.create_ufs_resource(resource_name, self.admin, resource_host)
             self.admin.assert_icommand("iadmin modresc %s context %s" %
-                                   (resource_name, resource_context), 'EMPTY')
+                                   (resource_name, resource_context))
 
             # create file to put
             lib.make_file(file1, 100)
 
             # put small file
             self.admin.assert_icommand("iput -R %s %s" % (resource_name, file1), 'STDERR', 'USER_SOCK_CONNECT_ERR')  # iput
-
         finally:
-
             if os.path.exists(file1):
                 os.unlink(file1)
 

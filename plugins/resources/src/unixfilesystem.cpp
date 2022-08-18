@@ -90,21 +90,22 @@ const std::string REQUIRED_FREE_INODES_FOR_CREATE("required_free_inodes_for_crea
 const std::string HOST_MODE("HOST_MODE");
 const std::string HOST_LIST("HOST_LIST");
 
-bool is_detached_mode(irods::plugin_property_map& prop_map)
-{
+namespace {
+    bool is_operating_in_detached_mode(irods::plugin_property_map& prop_map)
+    {
 
-    std::string host_mode_str;
+        std::string host_mode_str;
 
-    irods::error ret = prop_map.get< std::string >(HOST_MODE, host_mode_str);
-    if (ret.ok()) {
-
-        if (boost::iequals(host_mode_str.c_str(), "detached"))  {
-            return true;
+        irods::error ret = prop_map.get< std::string >(HOST_MODE, host_mode_str);
+        if (ret.ok()) {
+            if (boost::iequals(host_mode_str.c_str(), "detached"))  {
+                return true;
+            }
         }
-    }
 
-    // default is attached mode
-    return false;
+        // default is attached mode
+        return false;
+    }
 }
 
 static std::vector<std::string> split(const std::string str, char delim)
@@ -190,20 +191,18 @@ std::tuple<bool, std::optional<std::string>> get_detached_mode_vault_path(
 
 } // get_detached_mode_vault_path
 
-irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map)
+// The return value is always SUCCESS() because the errors encountered are to
+// be treated as warnings and no fatal errors.
+irods::error unix_file_start_operation(irods::plugin_property_map& prop_map)
 {
     using logger = irods::experimental::log;
-
     irods::error ret = SUCCESS();
-
-    bool detached_mode = is_detached_mode(prop_map);
+    bool detached_mode = is_operating_in_detached_mode(prop_map);
 
     if (detached_mode) {
 
         bool in_host_list;
         std::optional<std::string> new_vault_path_optional;
-
-        bool error = false;
 
         // update host to new host
         char local_hostname[MAX_NAME_LEN];
@@ -218,57 +217,68 @@ irods::error unixfilesystem_start_operation(irods::plugin_property_map& prop_map
         std::string resource_name;
         ret = prop_map.get<std::string>(irods::RESOURCE_NAME, resource_name);
         if ( !ret.ok() ) {
+            logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}."
+                    "  Failed to get irods::RESOURCE_NAME property.",
+                    resource_name.c_str(), local_hostname);
+            return SUCCESS();
+        }
 
-            error = true;
+        std::tie(in_host_list, new_vault_path_optional) =
+            get_detached_mode_vault_path(prop_map, resource_hostname, resource_name);
 
-        } else {
+        if (in_host_list) {
+            rodsLong_t resc_id = 0;
 
-            std::tie(in_host_list, new_vault_path_optional) =
-                get_detached_mode_vault_path(prop_map, resource_hostname, resource_name);
+            ret = resc_mgr.hier_to_leaf_id(resource_name, resc_id);
+            if( !ret.ok() ) {
+                logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}."
+                        "  Failed to call hier_to_leaf_id.",
+                        resource_name.c_str(), local_hostname);
+                return SUCCESS();
+            }
 
-            if (in_host_list) {
+            rodsServerHost_t *resource_host = nullptr;
+            ret = irods::get_resource_property< rodsServerHost_t*& >(resc_id, irods::RESOURCE_HOST, resource_host);
 
-                rodsLong_t resc_id = 0;
+            if (!ret.ok() || !resource_host) {
+                logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}."
+                        "  Failed to get resource property irods::RESOURCE_HOST.",
+                        resource_name.c_str(), local_hostname);
+                return SUCCESS();
+            }
 
-                ret = resc_mgr.hier_to_leaf_id(resource_name, resc_id);
-                if( !ret.ok() ) {
-                    error = true;
-                } else {
+            if (!resource_host) {
+                logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}."
+                        "  The resource_host from resource property irods::RESOURCE_HOST was null.",
+                        resource_name.c_str(), local_hostname);
+                return SUCCESS();
+            }
 
-                    rodsServerHost_t *resource_host = nullptr;
-                    ret = irods::get_resource_property< rodsServerHost_t*& >(resc_id, irods::RESOURCE_HOST, resource_host);
+            resource_host->hostName->name = strdup(local_hostname);
+            resource_host->localFlag = LOCAL_HOST;
+            ret = irods::set_resource_property< rodsServerHost_t* >( resource_name, irods::RESOURCE_HOST, resource_host);
+            if (!ret.ok()) {
+                logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}."
+                        "  Failed to call set_resource_property for irods::RESOURCE_HOST.",
+                        resource_name.c_str(), local_hostname);
+                return SUCCESS();
+            }
 
-                    if (!ret.ok() || !resource_host) {
-                        error = true;
-                    } else {
-                        resource_host->hostName->name = strdup(local_hostname);
-                        resource_host->localFlag = LOCAL_HOST;
-                        ret = irods::set_resource_property< rodsServerHost_t* >( resource_name, irods::RESOURCE_HOST, resource_host);
-                        if (!ret.ok()) {
-                            error = true;
-                        }
-                    }
-
-                    if (!error && new_vault_path_optional.has_value()) {
-                        ret = irods::set_resource_property< std::string >(
-                                resource_name, irods::RESOURCE_PATH, new_vault_path_optional.value());
-                        if (!ret.ok()) {
-                            error = true;
-                        }
-                    }
+            if (new_vault_path_optional.has_value()) {
+                ret = irods::set_resource_property< std::string >(
+                        resource_name, irods::RESOURCE_PATH, new_vault_path_optional.value());
+                if (!ret.ok()) {
+                    logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}."
+                            "  Failed to call set_resource_property for irods::RESOURCE_PATH.",
+                            resource_name.c_str(), local_hostname);
+                    return SUCCESS();
                 }
             }
         }
-
-        if (error) {
-            // log a warning but continue
-            logger::resource::warn("[resource_name={}] Detached mode failed to set RESOURCE_HOST to {}.",
-                    resource_name.c_str(), local_hostname);
-        }
     }
 
-    return ret;
-} // unixfilesystem_start_operation
+    return SUCCESS();
+} // unix_file_start_operation
 
 // =-=-=-=-=-=-=-
 // NOTE: All storage resources must do this on the physical path stored in the file object and then update
@@ -1361,7 +1371,7 @@ class unixfilesystem_resource : public irods::resource {
                         itr->second );
                 } // for itr
 
-            set_start_operation(unixfilesystem_start_operation);
+            set_start_operation(unix_file_start_operation);
 
         } // ctor
 
