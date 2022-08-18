@@ -9,6 +9,5 @@ set(IRODS_TEST_INCLUDE_PATH ${IRODS_EXTERNALS_FULLPATH_BOOST}/include
 set(IRODS_TEST_LINK_LIBRARIES irods_common
                               irods_client
                               irods_plugin_dependencies
-                              #irods_resource_plugin-unixfilesystem
-                              /usr/lib/irods/plugins/resources/libunixfilesystem.so
+                              /${IRODS_PLUGINS_DIRECTORY}/resources/libunixfilesystem.so
                               ${IRODS_EXTERNALS_FULLPATH_FMT}/lib/libfmt.so)
