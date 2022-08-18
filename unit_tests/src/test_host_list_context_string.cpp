@@ -23,11 +23,7 @@
 #include <irods/irods_plugin_base.hpp>
 #include <fmt/format.h>
 #include "irods/filesystem/path.hpp"
-
-std::tuple<bool, std::optional<std::string>> get_detached_mode_vault_path(
-        irods::plugin_property_map& prop_map,
-        const std::string& resource_hostname,
-        const std::string& resource_name);
+#include "irods/private/irods_get_detached_mode_vault_path.hpp"
 
 TEST_CASE("detached mode vault path", "[detached_mode_vault_path]")
 {
