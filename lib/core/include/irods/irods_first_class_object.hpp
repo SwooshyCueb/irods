@@ -9,14 +9,14 @@
 #include "irods/rcConnect.h"
 
 // =-=-=-=-=-=-=-
-// boost includs
-#include <boost/shared_ptr.hpp>
+// stl includes
 #include <map>
+#include <memory>
 
 namespace irods {
 
     class plugin_base;
-    typedef boost::shared_ptr<plugin_base>    plugin_ptr;
+    typedef std::shared_ptr<plugin_base>    plugin_ptr;
     typedef std::map<std::string,std::string> rule_engine_vars_t;
     // =-=-=-=-=-=-=-
     // base class for all object types
@@ -44,7 +44,7 @@ namespace irods {
 
     /// =-=-=-=-=-=-=-
     /// @brief shared pointer to first_class_object
-    typedef boost::shared_ptr< first_class_object > first_class_object_ptr;
+    typedef std::shared_ptr< first_class_object > first_class_object_ptr;
 
 }; // namespace irods
 

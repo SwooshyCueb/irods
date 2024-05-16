@@ -4,6 +4,8 @@
 #include "irods/irods_auth_plugin.hpp"
 #include "irods/rcMisc.h"
 
+#include <memory>
+
 #include <fmt/format.h>
 
 extern int ProcessType;
@@ -39,7 +41,7 @@ namespace irods {
             }
         }
 
-        _ptr = boost::dynamic_pointer_cast<plugin_base>(ap);
+        _ptr = std::dynamic_pointer_cast<plugin_base>(ap);
 
         return SUCCESS();
     } // krb_auth_object::resolve

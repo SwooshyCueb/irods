@@ -6,6 +6,10 @@
 #include "irods/irods_buffer_encryption.hpp"
 
 // =-=-=-=-=-=-=-
+// stl includes
+#include <memory>
+
+// =-=-=-=-=-=-=-
 // ssl includes
 #include <openssl/ssl.h>
 
@@ -126,7 +130,7 @@ namespace irods {
 
 /// =-=-=-=-=-=-=-
 /// @brief typedef for shared tcp object ptr
-    typedef boost::shared_ptr< ssl_object > ssl_object_ptr;
+    typedef std::shared_ptr< ssl_object > ssl_object_ptr;
 
 }; // namespace irods
 

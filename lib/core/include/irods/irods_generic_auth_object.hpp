@@ -7,6 +7,8 @@
 
 #include "irods/rcMisc.h"
 
+#include <memory>
+
 namespace irods {
 
     /**
@@ -47,7 +49,7 @@ namespace irods {
 
     };
 
-    typedef boost::shared_ptr<generic_auth_object> generic_auth_object_ptr;
+    typedef std::shared_ptr<generic_auth_object> generic_auth_object_ptr;
 
 }; // namespace irods
 

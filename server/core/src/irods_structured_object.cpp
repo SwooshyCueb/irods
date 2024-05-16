@@ -3,6 +3,8 @@
 #include "irods/irods_resource_manager.hpp"
 #include "irods/irods_stacktrace.hpp"
 
+#include <memory>
+
 extern irods::resource_manager resc_mgr;
 
 namespace irods {
@@ -148,7 +150,7 @@ namespace irods {
                                plugin_type,
                                resc_ptr );
         if ( err.ok() ) {
-            _ptr = boost::dynamic_pointer_cast< resource >( resc_ptr );
+            _ptr = std::dynamic_pointer_cast< resource >( resc_ptr );
             return SUCCESS();
 
         }
@@ -198,7 +200,7 @@ namespace irods {
         resc_ptr->set_property<std::string>( RESOURCE_CREATE_TS, "create?" );
         resc_ptr->set_property<std::string>( RESOURCE_MODIFY_TS, "modify?" );
 
-        _ptr = boost::dynamic_pointer_cast< resource >( resc_ptr );
+        _ptr = std::dynamic_pointer_cast< resource >( resc_ptr );
         return SUCCESS();
 
     } // resolve

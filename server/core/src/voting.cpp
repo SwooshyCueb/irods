@@ -6,6 +6,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <cmath>
+#include <memory>
 #include <optional>
 
 namespace irods::experimental::resource::voting {
@@ -232,7 +233,7 @@ float calculate(
 
     context ctx{
         plugin_ctx,
-        boost::dynamic_pointer_cast<irods::file_object>(plugin_ctx.fco()),
+        std::dynamic_pointer_cast<irods::file_object>(plugin_ctx.fco()),
         canonical_local_hostname,
         parser
     };

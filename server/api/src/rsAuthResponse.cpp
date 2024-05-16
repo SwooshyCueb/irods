@@ -21,6 +21,8 @@
 #include "irods/authCheck.h"
 #include "irods/miscServerFunct.hpp"
 
+#include <memory>
+
 int rsAuthResponse(
     rsComm_t*          _comm,
     authResponseInp_t* _resp ) {
@@ -66,7 +68,7 @@ int rsAuthResponse(
         irods::log( PASS( ret ) );
         return ret.code();
     }
-    irods::auth_ptr auth_plugin = boost::dynamic_pointer_cast< irods::auth >( ptr );
+    irods::auth_ptr auth_plugin = std::dynamic_pointer_cast< irods::auth >( ptr );
 
     // =-=-=-=-=-=-=-
     // call client side init - 'establish creds'

@@ -4,6 +4,8 @@
 #include "irods/irods_error.hpp"
 #include "irods/irods_auth_object.hpp"
 
+#include <memory>
+
 #include <gssapi.h>
 
 namespace irods {
@@ -85,7 +87,7 @@ namespace irods {
             std::string digest_;
     };
 
-    typedef boost::shared_ptr<gsi_auth_object> gsi_auth_object_ptr;
+    typedef std::shared_ptr<gsi_auth_object> gsi_auth_object_ptr;
 
 }; // namespace irods
 

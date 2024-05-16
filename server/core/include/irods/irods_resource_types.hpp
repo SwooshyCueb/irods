@@ -2,14 +2,14 @@
 #define __IRODS_RESOURCE_TYPES_HPP__
 
 // =-=-=-=-=-=-=-
-// Boost Includes
-#include <boost/shared_ptr.hpp>
+// stl includes
+#include <memory>
 
 namespace irods {
 // =-=-=-=-=-=-=-
 // resource plugin pointer type
     class resource;
-    typedef boost::shared_ptr< resource > resource_ptr;
+    typedef std::shared_ptr< resource > resource_ptr;
 
 // =-=-=-=-=-=-=-
 // fwd decl of resource manager for fco etc

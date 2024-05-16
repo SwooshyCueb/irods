@@ -22,6 +22,7 @@
 
 // =-=-=-=-=-=-=-
 // stl includes
+#include <memory>
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -95,7 +96,7 @@ irods::error osauth_auth_client_start(
 
     // =-=-=-=-=-=-=-
     // get the native auth object
-    irods::osauth_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+    irods::osauth_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                         irods::osauth_auth_object > (
                                             _ctx.fco() );
     // =-=-=-=-=-=-=-
@@ -134,7 +135,7 @@ irods::error osauth_auth_establish_context(
 
     // =-=-=-=-=-=-=-
     // get the native auth object
-    irods::osauth_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+    irods::osauth_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                         irods::osauth_auth_object > (
                                             _ctx.fco() );
     // =-=-=-=-=-=-=-
@@ -279,7 +280,7 @@ irods::error osauth_auth_client_request(
     else {
         // =-=-=-=-=-=-=-
         // get the auth object
-        irods::osauth_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+        irods::osauth_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                             irods::osauth_auth_object > ( _ctx.fco() );
         // =-=-=-=-=-=-=-
         // cache the challenge
@@ -310,7 +311,7 @@ irods::error osauth_auth_agent_request(
 
     // =-=-=-=-=-=-=-
     // get the auth object
-    irods::osauth_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+    irods::osauth_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                         irods::osauth_auth_object > ( _ctx.fco() );
     // =-=-=-=-=-=-=-
     // cache the challenge
@@ -352,7 +353,7 @@ irods::error osauth_auth_client_response(
 
     // =-=-=-=-=-=-=-
     // get the auth object
-    irods::osauth_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+    irods::osauth_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                         irods::osauth_auth_object > (
                                             _ctx.fco() );
     char response[ RESPONSE_LEN + 2 ];

@@ -28,6 +28,7 @@
 #include <cerrno>
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <string_view>
 
 #include <termios.h>
@@ -411,7 +412,7 @@ int clientLogin(rcComm_t* _comm, const char* _context, const char* _scheme_overr
         irods::log( PASS( ret ) );
         return ret.code();
     }
-    irods::auth_ptr auth_plugin = boost::dynamic_pointer_cast< irods::auth >( ptr );
+    irods::auth_ptr auth_plugin = std::dynamic_pointer_cast< irods::auth >( ptr );
 
     // =-=-=-=-=-=-=-
     // call client side init

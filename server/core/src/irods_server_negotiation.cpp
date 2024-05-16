@@ -11,6 +11,7 @@
 #include "irods/rsGlobalExtern.hpp"
 
 #include <list>
+#include <memory>
 
 #include <fmt/format.h>
 
@@ -135,7 +136,7 @@ namespace irods
 
         // =-=-=-=-=-=-=-
         // get the response from CS_NEG_CLI_1_MSG
-        boost::shared_ptr< cs_neg_t > read_cs_neg;
+        std::shared_ptr< cs_neg_t > read_cs_neg;
         err = read_client_server_negotiation_message( _ptr, read_cs_neg );
         if ( !err.ok() ) {
             return PASS( err );

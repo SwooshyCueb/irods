@@ -12,6 +12,8 @@
 #include "irods/irods_resource_backport.hpp"
 #include "irods/voting.hpp"
 
+#include <memory>
+
 #include <fmt/format.h>
 
 namespace
@@ -142,7 +144,7 @@ namespace
         irods::hierarchy_parser parser;
         float vote{};
         std::string host_name{host_name_str};
-        irods::first_class_object_ptr ptr = boost::dynamic_pointer_cast<irods::first_class_object>(_file_obj);
+        irods::first_class_object_ptr ptr = std::dynamic_pointer_cast<irods::first_class_object>(_file_obj);
         err = resc->call< const std::string*, const std::string*, irods::hierarchy_parser*, float* >(
                   _comm, irods::RESOURCE_OP_RESOLVE_RESC_HIER, ptr, &_oper, &host_name, &parser, &vote );
 

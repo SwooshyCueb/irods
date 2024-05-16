@@ -39,6 +39,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <memory>
 #include <list>
 #include <boost/lexical_cast.hpp>
 
@@ -160,7 +161,7 @@ irods::error replUpdateObjectAndOperProperties(
     object_list_t object_list;
     // The object list is now a queue of operations and their associated objects. Their corresponding replicating operations
     // will be performed one at a time in the order in which they were put into the queue.
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
     ret = _ctx.prop_map().get<object_list_t>( OBJECT_LIST_PROP, object_list );
     irods::object_oper oper;
     if ( !ret.ok() && ret.code() != KEY_NOT_FOUND ) {
@@ -222,7 +223,7 @@ irods::error get_selected_hierarchy(
     // Get selected hier from RESC_HIER_STR_KW, set at time of resolution
     irods::hierarchy_parser selected_parser{};
     bool resc_hier_in_keyword{};
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
 
     if (!resc_hier_in_keyword) {
         auto cond_input = irods::experimental::make_key_value_proxy((KeyValPair&)file_obj->cond_input());
@@ -350,7 +351,7 @@ irods::error repl_file_registered(irods::plugin_context& _ctx)
         return PASSMSG("Error checking passed parameters.", err);
     }
 
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( _ctx.fco() );
     irods::hierarchy_parser parser;
     parser.set_string( file_obj->resc_hier() );
     irods::resource_ptr child;
@@ -378,7 +379,7 @@ irods::error repl_file_unregistered(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -487,7 +488,7 @@ irods::error repl_file_modified(irods::plugin_context& _ctx) {
     }
 
     // Get next resource on which to call file_modified
-    irods::file_object_ptr file_obj{boost::dynamic_pointer_cast<irods::file_object>(_ctx.fco())};
+    irods::file_object_ptr file_obj{std::dynamic_pointer_cast<irods::file_object>(_ctx.fco())};
     irods::hierarchy_parser parser{};
     parser.set_string(file_obj->resc_hier());
     irods::resource_ptr child{};
@@ -592,7 +593,7 @@ irods::error repl_file_create(
         result = PASSMSG( "repl_file_create - bad params.", ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -631,7 +632,7 @@ irods::error repl_file_open(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -672,7 +673,7 @@ irods::error repl_file_read(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -717,7 +718,7 @@ irods::error repl_file_write(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -752,7 +753,7 @@ irods::error repl_file_close(irods::plugin_context& _ctx)
         return PASSMSG("Bad params.", err);
     }
 
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
     irods::hierarchy_parser parser;
     parser.set_string(file_obj->resc_hier());
     irods::resource_ptr child;
@@ -783,7 +784,7 @@ irods::error repl_file_unlink(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::data_object_ptr data_obj = boost::dynamic_pointer_cast<irods::data_object >( _ctx.fco() );
+        irods::data_object_ptr data_obj = std::dynamic_pointer_cast<irods::data_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( data_obj->resc_hier() );
         irods::resource_ptr child;
@@ -827,7 +828,7 @@ irods::error repl_file_stat(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::data_object_ptr data_obj = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+        irods::data_object_ptr data_obj = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( data_obj->resc_hier() );
         irods::resource_ptr child;
@@ -871,7 +872,7 @@ irods::error repl_file_lseek(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -913,7 +914,7 @@ irods::error repl_file_mkdir(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::collection_object_ptr collection_obj = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+        irods::collection_object_ptr collection_obj = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( collection_obj->resc_hier() );
         irods::resource_ptr child;
@@ -955,7 +956,7 @@ irods::error repl_file_rmdir(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::collection_object_ptr file_obj = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+        irods::collection_object_ptr file_obj = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -997,7 +998,7 @@ irods::error repl_file_opendir(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::collection_object_ptr collection_obj = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+        irods::collection_object_ptr collection_obj = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( collection_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1039,7 +1040,7 @@ irods::error repl_file_closedir(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::collection_object_ptr collection_obj = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+        irods::collection_object_ptr collection_obj = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( collection_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1082,7 +1083,7 @@ irods::error repl_file_readdir(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::collection_object_ptr collection_obj = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+        irods::collection_object_ptr collection_obj = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( collection_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1125,7 +1126,7 @@ irods::error repl_file_rename(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1168,7 +1169,7 @@ irods::error repl_file_truncate(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr ptr = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr ptr = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( ptr->resc_hier() );
         irods::resource_ptr child;
@@ -1210,7 +1211,7 @@ irods::error repl_file_getfs_freespace(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1255,7 +1256,7 @@ irods::error repl_file_stage_to_cache(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1301,7 +1302,7 @@ irods::error repl_file_sync_to_arch(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;
@@ -1450,7 +1451,7 @@ irods::error repl_file_resolve_hierarchy(
     }
 
     // If child list property exists, use previously selected parser for the vote
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
     const auto hier_str{getValByKey(&file_obj->cond_input(), RESC_HIER_STR_KW)};
     if (hier_str) {
         irods::hierarchy_parser selected_parser{};
@@ -1558,7 +1559,7 @@ irods::error repl_file_notify(
         result = PASSMSG( msg.str(), ret );
     }
     else {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object >( ( _ctx.fco() ) );
         irods::hierarchy_parser parser;
         parser.set_string( file_obj->resc_hier() );
         irods::resource_ptr child;

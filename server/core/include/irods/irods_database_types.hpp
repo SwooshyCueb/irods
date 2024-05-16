@@ -3,7 +3,6 @@
 
 // =-=-=-=-=-=-=-
 // Boost Includes
-#include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
 
 // =-=-=-=-=-=-=-
@@ -15,11 +14,15 @@
 // irods includes
 #include "irods/rcConnect.h"
 
+// =-=-=-=-=-=-=-
+// stl includes
+#include <memory>
+
 namespace irods {
 // =-=-=-=-=-=-=-
 // database plugin pointer type
     class database;
-    typedef boost::shared_ptr< database > database_ptr;
+    typedef std::shared_ptr< database > database_ptr;
 
 // =-=-=-=-=-=-=-
 // fwd decl of database manager for fco resolve

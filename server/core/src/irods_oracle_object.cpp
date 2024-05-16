@@ -3,6 +3,8 @@
 #include "irods/irods_oracle_object.hpp"
 #include "irods/irods_database_manager.hpp"
 
+#include <memory>
+
 namespace irods {
 
 // =-=-=-=-=-=-=-
@@ -82,7 +84,7 @@ namespace irods {
             else {
                 // =-=-=-=-=-=-=-
                 // upcast for out variable
-                _ptr = boost::dynamic_pointer_cast< plugin_base >( db_ptr );
+                _ptr = std::dynamic_pointer_cast< plugin_base >( db_ptr );
                 return SUCCESS();
 
             }
@@ -91,7 +93,7 @@ namespace irods {
 
         // =-=-=-=-=-=-=-
         // upcast for out variable
-        _ptr = boost::dynamic_pointer_cast< plugin_base >( db_ptr );
+        _ptr = std::dynamic_pointer_cast< plugin_base >( db_ptr );
 
         return SUCCESS();
 

@@ -17,6 +17,8 @@
 #include "irods/authRequest.h"
 #include "irods/authenticate.h"
 
+#include <memory>
+
 int get64RandomBytes( char *buf );
 static char buf[CHALLENGE_LEN + MAX_PASSWORD_LEN + 1];
 
@@ -68,7 +70,7 @@ int rsAuthRequest(
         irods::log( PASS( ret ) );
         return ret.code();
     }
-    irods::auth_ptr auth_plugin = boost::dynamic_pointer_cast< irods::auth >( ptr );
+    irods::auth_ptr auth_plugin = std::dynamic_pointer_cast< irods::auth >( ptr );
 
     // =-=-=-=-=-=-=-
     // call client side init - 'establish creds'

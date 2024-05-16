@@ -5,6 +5,8 @@
 #include "irods/rodsKeyWdDef.h"
 #include "irods/rcMisc.h"
 
+#include <memory>
+
 extern int ProcessType;
 
 namespace irods {
@@ -143,7 +145,7 @@ namespace irods {
             else {
                 // =-=-=-=-=-=-=-
                 // upcast for out variable
-                _ptr = boost::dynamic_pointer_cast< plugin_base >( net_ptr );
+                _ptr = std::dynamic_pointer_cast< plugin_base >( net_ptr );
                 return SUCCESS();
 
             }
@@ -152,7 +154,7 @@ namespace irods {
 
         // =-=-=-=-=-=-=-
         // upcast for out variable
-        _ptr = boost::dynamic_pointer_cast< plugin_base >( net_ptr );
+        _ptr = std::dynamic_pointer_cast< plugin_base >( net_ptr );
 
         return SUCCESS();
 

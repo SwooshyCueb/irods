@@ -65,6 +65,7 @@
 #include <iomanip>
 #include <fstream>
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -419,7 +420,7 @@ svrPortalPutGet( rsComm_t *rsComm ) {
     int i;
     int numThreads;
     portalTransferInp_t myInput[MAX_NUM_CONFIG_TRAN_THR];
-    boost::shared_ptr<boost::thread> tid[MAX_NUM_CONFIG_TRAN_THR];
+    std::shared_ptr<boost::thread> tid[MAX_NUM_CONFIG_TRAN_THR];
     int oprType;
     int flags = 0;
     int retVal = 0;

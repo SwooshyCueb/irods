@@ -14,6 +14,7 @@
 
 // =-=-=-=-=-=-=-
 // stl includes
+#include <memory>
 #include <optional>
 #include <string_view>
 #include <tuple>
@@ -183,7 +184,7 @@ namespace irods {
 
 /// =-=-=-=-=-=-=-
 /// @brief typedef for managed file object ptr
-    typedef boost::shared_ptr< file_object > file_object_ptr;
+    typedef std::shared_ptr< file_object > file_object_ptr;
 
 // =-=-=-=-=-=-=-
 // factory function which will take a dataObjInfo pointer and create a file_object

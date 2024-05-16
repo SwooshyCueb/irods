@@ -9,6 +9,10 @@ extern int ProcessType;
 // irods includes
 #include "irods/rcMisc.h"
 
+// =-=-=-=-=-=-=-
+// stl includes
+#include <memory>
+
 namespace irods {
 
 // =-=-=-=-=-=-=-
@@ -93,7 +97,7 @@ namespace irods {
             else {
                 // =-=-=-=-=-=-=-
                 // upcast for out variable
-                _ptr = boost::dynamic_pointer_cast< plugin_base >( a_ptr );
+                _ptr = std::dynamic_pointer_cast< plugin_base >( a_ptr );
                 return SUCCESS();
 
             }
@@ -102,7 +106,7 @@ namespace irods {
 
         // =-=-=-=-=-=-=-
         // upcast for out variable
-        _ptr = boost::dynamic_pointer_cast< plugin_base >( a_ptr );
+        _ptr = std::dynamic_pointer_cast< plugin_base >( a_ptr );
 
         return SUCCESS();
 

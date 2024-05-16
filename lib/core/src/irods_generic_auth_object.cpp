@@ -2,6 +2,8 @@
 #include "irods/irods_auth_plugin.hpp"
 #include "irods/irods_generic_auth_object.hpp"
 
+#include <memory>
+
 extern int ProcessType;
 
 namespace irods {
@@ -54,12 +56,12 @@ namespace irods {
                 return PASS( ret );
             }
             else {
-                _plugin = boost::dynamic_pointer_cast<plugin_base>( auth_p );
+                _plugin = std::dynamic_pointer_cast<plugin_base>( auth_p );
                 return SUCCESS();
             }
         }
 
-        _plugin = boost::dynamic_pointer_cast<plugin_base>( auth_p );
+        _plugin = std::dynamic_pointer_cast<plugin_base>( auth_p );
         return SUCCESS();
     }
 

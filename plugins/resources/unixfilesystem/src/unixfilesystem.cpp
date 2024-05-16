@@ -285,7 +285,7 @@ irods::error unix_generate_full_path(
 irods::error unix_check_path(irods::plugin_context& _ctx)
 {
     // try dynamic cast on ptr, throw error otherwise
-    irods::data_object_ptr data_obj = boost::dynamic_pointer_cast<irods::data_object>(_ctx.fco());
+    irods::data_object_ptr data_obj = std::dynamic_pointer_cast<irods::data_object>(_ctx.fco());
     if (!data_obj.get()) {
         return ERROR(SYS_INVALID_INPUT_PARAM, "Failed to cast fco to data_object.");
     }
@@ -371,7 +371,7 @@ irods::error unix_file_registered(irods::plugin_context& _ctx)
         return SUCCESS();
     }
 
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
+    irods::file_object_ptr fco = std::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
     std::string file_path = fco->physical_path();
 
     std::string vault_path;
@@ -426,7 +426,7 @@ irods::error unix_file_getfs_freespace(irods::plugin_context& _ctx)
     }
 
     // cast down the hierarchy to the desired object
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
     size_t found = fco->physical_path().find_last_of( "/" );
     std::string path = fco->physical_path().substr( 0, found + 1 );
     int status = -1;
@@ -548,7 +548,7 @@ irods::error unix_file_create(irods::plugin_context& _ctx)
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     char* kvp_str = getValByKey(
             &fco->cond_input(),
@@ -646,7 +646,7 @@ irods::error unix_file_open(irods::plugin_context& _ctx)
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     char* kvp_str = getValByKey(
             &fco->cond_input(),
@@ -732,7 +732,7 @@ irods::error unix_file_read(irods::plugin_context& _ctx,
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to read
     const int status = read(fco->file_descriptor(), _buf, _len);
@@ -761,7 +761,7 @@ irods::error unix_file_write(irods::plugin_context& _ctx,
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to write
     const int status = write(fco->file_descriptor(), _buf, _len);
@@ -788,7 +788,7 @@ irods::error unix_file_close(irods::plugin_context& _ctx)
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to close
     const int status = close(fco->file_descriptor());
@@ -815,7 +815,7 @@ irods::error unix_file_unlink(irods::plugin_context& _ctx)
     }
 
     // get ref to fco
-    irods::data_object_ptr fco = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+    irods::data_object_ptr fco = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
 
     // make the call to unlink
     const int status = unlink(fco->physical_path().c_str());
@@ -845,7 +845,7 @@ irods::error unix_file_stat(irods::plugin_context& _ctx, struct stat* _statbuf)
     }
 
     // get ref to fco
-    irods::data_object_ptr fco = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+    irods::data_object_ptr fco = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
 
     // make the call to stat
     const int status = stat( fco->physical_path().c_str(), _statbuf );
@@ -874,7 +874,7 @@ irods::error unix_file_lseek(irods::plugin_context& _ctx,
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to lseek
     const long long status = lseek(fco->file_descriptor(), _offset, _whence);
@@ -902,7 +902,7 @@ irods::error unix_file_mkdir(irods::plugin_context& _ctx)
     }
 
     // cast down the chain to our understood object type
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
 
     // make the call to mkdir & umask
     mode_t myMask = umask( ( mode_t ) 0000 );
@@ -933,7 +933,7 @@ irods::error unix_file_rmdir(irods::plugin_context& _ctx)
     }
 
     // cast down the chain to our understood object type
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
 
     // make the call to rmdir
     const int status = rmdir( fco->physical_path().c_str() );
@@ -958,7 +958,7 @@ irods::error unix_file_opendir(irods::plugin_context& _ctx)
     }
 
     // cast down the chain to our understood object type
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
 
     // make the call to opendir
     DIR* dir_ptr = opendir( fco->physical_path().c_str() );
@@ -994,7 +994,7 @@ irods::error unix_file_closedir(irods::plugin_context& _ctx)
     }
 
     // cast down the chain to our understood object type
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
 
     // make the call to opendir
     const int status = closedir(fco->directory_pointer());
@@ -1019,7 +1019,7 @@ irods::error unix_file_readdir(irods::plugin_context& _ctx, struct rodsDirent** 
     }
 
     // cast down the chain to our understood object type
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
 
     // zero out errno?
     errno = 0;
@@ -1075,7 +1075,7 @@ irods::error unix_file_rename(irods::plugin_context& _ctx, const char* _new_file
     }
 
     // cast down the hierarchy to the desired object
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // get the default directory mode
     mode_t mode = 0750;
@@ -1119,7 +1119,7 @@ irods::error unix_file_truncate(irods::plugin_context& _ctx)
     }
 
     // cast down the chain to our understood object type
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to rename
     const int status = truncate(file_obj->physical_path().c_str(), file_obj->size());
@@ -1147,7 +1147,7 @@ irods::error unix_file_stage_to_cache(irods::plugin_context& _ctx, const char* _
     }
 
     // cast down the hierarchy to the desired object
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     if (const auto err = unix_file_copy(fco->mode(), fco->physical_path().c_str(), _cache_file_name); !err.ok()) {
         return err;
@@ -1167,7 +1167,7 @@ irods::error unix_file_sync_to_arch(irods::plugin_context& _ctx, const char* _ca
     }
 
     // cast down the hierarchy to the desired object
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     if (const auto err = unix_file_copy(fco->mode(), _cache_file_name, fco->physical_path().c_str()); !err.ok()) {
         return err;
@@ -1199,7 +1199,7 @@ irods::error unix_file_resolve_hierarchy(
         warn_if_deprecated_context_string_set(_ctx);
     }
 
-    irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
+    irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
     if (getValByKey(&file_obj->cond_input(), RECURSIVE_OPR__KW)) {
         irods::experimental::log::resource::debug(
             (boost::format("%s: %s found in cond_input for file_obj") %

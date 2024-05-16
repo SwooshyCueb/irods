@@ -4,6 +4,8 @@
 #include "irods/irods_hierarchy_parser.hpp"
 #include "irods/irods_stacktrace.hpp"
 
+#include <memory>
+
 extern irods::resource_manager resc_mgr;
 
 namespace irods {
@@ -170,7 +172,7 @@ namespace irods {
                     result = PASSMSG( msg.str(), ret );
                 }
 
-                _ptr = boost::dynamic_pointer_cast< resource >( resc_ptr );
+                _ptr = std::dynamic_pointer_cast< resource >( resc_ptr );
             }
         }
         return result;

@@ -19,6 +19,7 @@
 // =-=-=-=-=-=-=-
 // stl includes
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -96,7 +97,7 @@ irods::error mock_archive_generate_full_path(
 irods::error mock_archive_check_path(irods::plugin_context& _ctx)
 {
     try {
-        irods::data_object_ptr data_obj = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+        irods::data_object_ptr data_obj = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
 
         // NOTE: Must do this for all storage resources
         std::string full_path;
@@ -210,7 +211,7 @@ irods::error mock_archive_file_mkdir(irods::plugin_context& _ctx)
     }
 
     // cast down the chain to our understood object type
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
 
     // make the call to mkdir & umask
     mode_t myMask = umask( ( mode_t ) 0000 );
@@ -263,7 +264,7 @@ irods::error mock_archive_file_rename(irods::plugin_context& _ctx,
     }
 
     // cast down the hierarchy to the desired object
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // get hashed names for the old path
     std::string new_hash{};
@@ -300,7 +301,7 @@ irods::error mock_archive_file_truncate(irods::plugin_context& _ctx)
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to unlink
     if (const int status = truncate(fco->physical_path().c_str(), fco->size()); status < 0) {
@@ -321,7 +322,7 @@ irods::error mock_archive_file_unlink(irods::plugin_context& _ctx)
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // make the call to unlink
     if (const int status = unlink( fco->physical_path().c_str()); status < 0) {
@@ -434,7 +435,7 @@ irods::error mock_archive_file_stage_to_cache(irods::plugin_context& _ctx,
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // get the vault path for the resource
     std::string path;
@@ -466,7 +467,7 @@ irods::error mock_archive_file_sync_to_arch(irods::plugin_context& _ctx,
     }
 
     // get ref to fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
     // get the vault path for the resource
     std::string path;

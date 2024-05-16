@@ -16,6 +16,8 @@
 #include "irods/replica_proxy.hpp"
 #include "irods/data_object_proxy.hpp"
 
+#include <memory>
+
 #include <fmt/format.h>
 
 namespace {
@@ -228,7 +230,7 @@ namespace irods {
                     result = PASSMSG( msg.str(), ret );
                 }
 
-                _ptr = boost::dynamic_pointer_cast< resource >( resc_ptr );
+                _ptr = std::dynamic_pointer_cast< resource >( resc_ptr );
             }
         }
 

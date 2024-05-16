@@ -818,7 +818,7 @@ int agentMain(RsComm* rsComm)
             return err.code();
         }
 
-        irods::auth_ptr auth_plugin = boost::dynamic_pointer_cast<irods::auth>(ptr);
+        irods::auth_ptr auth_plugin = std::dynamic_pointer_cast<irods::auth>(ptr);
 
         // Call agent start
         if (const auto err = auth_plugin->call<const char*>(rsComm, irods::AUTH_AGENT_START, auth_obj, ""); !err.ok()) {

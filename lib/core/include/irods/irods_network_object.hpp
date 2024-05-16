@@ -9,8 +9,8 @@
 #include "irods/rcConnect.h"
 
 // =-=-=-=-=-=-=-
-// boost includes
-#include <boost/shared_ptr.hpp>
+// stl includes
+#include <memory>
 
 namespace irods {
 // =-=-=-=-=-=-=-
@@ -75,7 +75,7 @@ namespace irods {
 
 // =-=-=-=-=-=-=-
 // helpful typedef for sock comm interface & factory
-    typedef boost::shared_ptr< network_object > network_object_ptr;
+    typedef std::shared_ptr< network_object > network_object_ptr;
 
 }; // namespace irods
 

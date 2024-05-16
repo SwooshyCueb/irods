@@ -22,6 +22,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -120,7 +121,7 @@ irods::error univ_mss_file_unlink(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::data_object_ptr fco = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+    irods::data_object_ptr fco = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
     std::string filename = fco->physical_path();
 
     execCmd_t execCmdInp;
@@ -172,7 +173,7 @@ irods::error univ_mss_file_stat(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::data_object_ptr fco = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+    irods::data_object_ptr fco = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
     std::string filename = fco->physical_path();
 
 
@@ -285,7 +286,7 @@ irods::error univ_mss_file_chmod(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::data_object_ptr fco = boost::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
+    irods::data_object_ptr fco = std::dynamic_pointer_cast< irods::data_object >( _ctx.fco() );
     std::string filename = fco->physical_path();
 
     int mode = fco->mode();
@@ -343,7 +344,7 @@ irods::error univ_mss_file_mkdir(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::collection_object_ptr fco = boost::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
+    irods::collection_object_ptr fco = std::dynamic_pointer_cast< irods::collection_object >( _ctx.fco() );
     std::string dirname = fco->physical_path();
 
     int status = 0;
@@ -432,7 +433,7 @@ irods::error univ_mss_file_rename(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
     std::string filename = fco->physical_path();
 
     // =-=-=-=-=-=-=-
@@ -521,7 +522,7 @@ irods::error univ_mss_file_stage_to_cache(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
     std::string filename = fco->physical_path();
 
     // =-=-=-=-=-=-=-
@@ -582,7 +583,7 @@ irods::error univ_mss_file_sync_to_arch(
 
     // =-=-=-=-=-=-=-
     // snag a ref to the fco
-    irods::file_object_ptr fco = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+    irods::file_object_ptr fco = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
     std::string filename = fco->physical_path();
 
     // =-=-=-=-=-=-=-

@@ -1,6 +1,7 @@
 #ifndef IRODS_PLUGIN_BASE_HPP
 #define IRODS_PLUGIN_BASE_HPP
 
+#include <memory>
 #include <string>
 
 #include <boost/function.hpp>
@@ -430,7 +431,7 @@ namespace irods
 
     // =-=-=-=-=-=-=-
     // helpful typedef for sock comm interface & factory
-    typedef boost::shared_ptr<plugin_base> plugin_ptr;
+    typedef std::shared_ptr<plugin_base> plugin_ptr;
 } // namespace irods
 
 #endif // IRODS_PLUGIN_BASE_HPP

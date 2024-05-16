@@ -27,6 +27,7 @@
 
 // =-=-=-=-=-=-=-
 // stl includes
+#include <memory>
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -66,7 +67,7 @@ irods::error pam_auth_client_start(irods::plugin_context& _ctx,
     }
 
     // simply cache the context string for a rainy day... or to pass to the auth client call later.
-    irods::pam_auth_object_ptr ptr = boost::dynamic_pointer_cast<irods::pam_auth_object>(_ctx.fco());
+    irods::pam_auth_object_ptr ptr = std::dynamic_pointer_cast<irods::pam_auth_object>(_ctx.fco());
     ptr->context(_context);
 
     std::string password = kvp[ irods::AUTH_PASSWORD_KEY ];
@@ -148,7 +149,7 @@ irods::error pam_auth_client_request(
 
     // =-=-=-=-=-=-=-
     // get the auth object
-    irods::pam_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+    irods::pam_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                      irods::pam_auth_object > ( _ctx.fco() );
     // =-=-=-=-=-=-=-
     // get the context string
@@ -316,7 +317,7 @@ irods::error pam_auth_agent_request(
     // =-=-=-=-=-=-=-
     // simply cache the context string for a rainy day...
     // or to pass to the auth client call later.
-    irods::pam_auth_object_ptr ptr = boost::dynamic_pointer_cast <
+    irods::pam_auth_object_ptr ptr = std::dynamic_pointer_cast <
                                          irods::pam_auth_object > ( _ctx.fco() );
     std::string context = ptr->context( );
 

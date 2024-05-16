@@ -28,6 +28,7 @@
 // =-=-=-=-=-=-=-
 // stl includes
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -809,7 +810,7 @@ irods::error tar_file_create(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -910,7 +911,7 @@ irods::error tar_file_open(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1009,7 +1010,7 @@ irods::error tar_file_read(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // check range on the sub file index
@@ -1060,7 +1061,7 @@ irods::error tar_file_write(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // check range on the sub file index
@@ -1121,7 +1122,7 @@ irods::error tar_file_close(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // check range on the sub file index
@@ -1172,7 +1173,7 @@ irods::error tar_file_unlink(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1260,7 +1261,7 @@ irods::error tar_file_stat(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1343,7 +1344,7 @@ irods::error tar_file_lseek(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // check range on the sub file index
@@ -1399,7 +1400,7 @@ irods::error tar_file_mkdir(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1488,7 +1489,7 @@ irods::error tar_file_rmdir(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1573,7 +1574,7 @@ irods::error tar_file_opendir(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1672,7 +1673,7 @@ irods::error tar_file_closedir(
 
     // =-=-=-=-=-=-=-
     // extract the fco
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // check range on the sub file index
@@ -1721,7 +1722,7 @@ irods::error tar_file_readdir(
 
     // =-=-=-=-=-=-=-
     // extract the fco
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // check range on the sub file index
@@ -1766,7 +1767,7 @@ irods::error tar_file_rename(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1864,7 +1865,7 @@ irods::error tar_file_truncate(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr struct_obj = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr struct_obj = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -1961,7 +1962,7 @@ irods::error tar_file_extract(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer
@@ -2464,7 +2465,7 @@ irods::error tar_file_sync(
 
     // =-=-=-=-=-=-=-
     // cast down the chain to our understood object type
-    irods::structured_object_ptr fco = boost::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
+    irods::structured_object_ptr fco = std::dynamic_pointer_cast< irods::structured_object >( _ctx.fco() );
 
     // =-=-=-=-=-=-=-
     // extract and check the special collection pointer

@@ -9,6 +9,10 @@
 // =-=-=-=-=-=-=-
 #include "irods/irods_data_object.hpp"
 
+// =-=-=-=-=-=-=-
+// stl includes
+#include <memory>
+
 namespace irods {
 
     class collection_object : public data_object {
@@ -82,7 +86,7 @@ namespace irods {
 
 /// =-=-=-=-=-=-=-
 /// @brief typedef for managed collection object pointer
-    typedef boost::shared_ptr< collection_object > collection_object_ptr;
+    typedef std::shared_ptr< collection_object > collection_object_ptr;
 
 }; // namespace irods
 

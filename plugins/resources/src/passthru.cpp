@@ -24,6 +24,7 @@
 // =-=-=-=-=-=-=-
 // stl includes
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -76,7 +77,7 @@ namespace
                                       const std::string& _this_resource_name,
                                       double _weight) -> void
     {
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast<irods::file_object>(_ctx.fco());
         for (auto& r : file_obj->replicas()) {
             // Only apply vote weight to replicas whose hierarchies contain this resource.
             if (!irods::hierarchy_parser{r.resc_hier()}.contains(_this_resource_name)) {

@@ -315,7 +315,7 @@ irods::error make_db_ptr(
 
     }
 
-    _pg = boost::dynamic_pointer_cast <
+    _pg = std::dynamic_pointer_cast <
           irods::postgres_object > (
               _fc );
 
@@ -1138,7 +1138,7 @@ irods::error verify_auth_response(
     if ( !ret.ok() ) {
         return ret;
     }
-    irods::auth_ptr auth_plugin = boost::dynamic_pointer_cast< irods::auth >( ptr );
+    irods::auth_ptr auth_plugin = std::dynamic_pointer_cast< irods::auth >( ptr );
 
     // =-=-=-=-=-=-=-
     // call auth verify on plugin

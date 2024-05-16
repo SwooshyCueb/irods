@@ -10,6 +10,7 @@
 #include "irods/rcMisc.h"
 
 #include <cstdio>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -169,7 +170,7 @@ irods::error tcp_read_msg_header(
 
     // =-=-=-=-=-=-=-
     // extract the useful bits from the context
-    irods::tcp_object_ptr tcp = boost::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
+    irods::tcp_object_ptr tcp = std::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
     int socket_handle = tcp->socket_handle();
 
     // =-=-=-=-=-=-=-
@@ -247,7 +248,7 @@ irods::error tcp_write_msg_header(
 
     // =-=-=-=-=-=-=-
     // extract the useful bits from the context
-    irods::tcp_object_ptr tcp = boost::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
+    irods::tcp_object_ptr tcp = std::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
     int socket_handle = tcp->socket_handle();
 
     // =-=-=-=-=-=-=-
@@ -319,7 +320,7 @@ irods::error tcp_send_rods_msg(
 
     // =-=-=-=-=-=-=-
     // extract the useful bits from the context
-    irods::tcp_object_ptr tcp = boost::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
+    irods::tcp_object_ptr tcp = std::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
     int socket_handle = tcp->socket_handle();
 
     // =-=-=-=-=-=-=-
@@ -499,7 +500,7 @@ irods::error tcp_read_msg_body(
 
     // =-=-=-=-=-=-=-
     // extract the useful bits from the context
-    irods::tcp_object_ptr tcp = boost::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
+    irods::tcp_object_ptr tcp = std::dynamic_pointer_cast< irods::tcp_object >( _ctx.fco() );
     int socket_handle = tcp->socket_handle();
 
     // =-=-=-=-=-=-=-

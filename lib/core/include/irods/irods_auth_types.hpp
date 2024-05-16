@@ -2,7 +2,6 @@
 
 // =-=-=-=-=-=-=-
 // Boost Includes
-#include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
 
 // =-=-=-=-=-=-=-
@@ -13,11 +12,15 @@
 // irods includes
 #include "irods/rcConnect.h"
 
+// =-=-=-=-=-=-=-
+// stl includes
+#include <memory>
+
 namespace irods {
 // =-=-=-=-=-=-=-
 // auth plugin pointer type
     class auth;
-    typedef boost::shared_ptr< auth > auth_ptr;
+    typedef std::shared_ptr< auth > auth_ptr;
 
 // =-=-=-=-=-=-=-
 // fwd decl of network manager for fco resolve

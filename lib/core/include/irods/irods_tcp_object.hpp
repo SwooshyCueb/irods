@@ -4,6 +4,8 @@
 // =-=-=-=-=-=-=-
 #include "irods/irods_network_object.hpp"
 
+#include <memory>
+
 namespace irods {
 // =-=-=-=-=-=-=-
 // constant key for tcp network object
@@ -50,7 +52,7 @@ namespace irods {
 
 /// =-=-=-=-=-=-=-
 /// @brief typedef for shared tcp object ptr
-    typedef boost::shared_ptr< tcp_object > tcp_object_ptr;
+    typedef std::shared_ptr< tcp_object > tcp_object_ptr;
 
 }; // namespace irods
 

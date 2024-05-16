@@ -7,8 +7,8 @@
 #include "irods/rcConnect.h"
 
 // =-=-=-=-=-=-=-
-// boost includes
-#include <boost/shared_ptr.hpp>
+// stl includes
+#include <memory>
 
 namespace irods {
 
@@ -49,7 +49,7 @@ namespace irods {
     }; // class pam_auth_object
 
 /// @brief Helpful typedef
-    typedef boost::shared_ptr<pam_auth_object> pam_auth_object_ptr;
+    typedef std::shared_ptr<pam_auth_object> pam_auth_object_ptr;
 
 }; // namespace irods
 

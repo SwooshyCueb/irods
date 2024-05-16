@@ -6,8 +6,7 @@
 
 #include "irods/rcConnect.h"
 
-// boost includes
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace irods {
     /**
@@ -83,7 +82,7 @@ namespace irods {
     };
 
 /// @brief Helpful typedef
-    typedef boost::shared_ptr<auth_object> auth_object_ptr;
+    typedef std::shared_ptr<auth_object> auth_object_ptr;
 
 }; // namespace irods
 

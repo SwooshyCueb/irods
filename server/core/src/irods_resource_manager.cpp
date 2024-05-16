@@ -24,6 +24,7 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
+#include <memory>
 
 // =-=-=-=-=-=-=-
 // global singleton
@@ -345,7 +346,7 @@ namespace irods
     error resource_manager::shut_down_resources( ) {
         // =-=-=-=-=-=-=-
         // iterate over all resources in the table
-        lookup_table< boost::shared_ptr< resource > >::iterator itr;
+        lookup_table< std::shared_ptr< resource > >::iterator itr;
         for ( itr =  resource_name_map_.begin();
                 itr != resource_name_map_.end();
                 ++itr ) {
@@ -363,7 +364,7 @@ namespace irods
         std::vector< std::string >& _list ) {
         // =-=-=-=-=-=-=-
         // iterate over all resources in the table
-        lookup_table< boost::shared_ptr< resource > >::iterator itr;
+        lookup_table< std::shared_ptr< resource > >::iterator itr;
         for ( itr =  resource_name_map_.begin();
                 itr != resource_name_map_.end();
                 ++itr ) {
@@ -657,7 +658,7 @@ namespace irods
 // =-=-=-=-=-=-=-
 // public - print the list of local resources out to stderr
     void resource_manager::print_local_resources() {
-        lookup_table< boost::shared_ptr< resource > >::iterator itr;
+        lookup_table< std::shared_ptr< resource > >::iterator itr;
         for ( itr = resource_name_map_.begin(); itr != resource_name_map_.end(); ++itr ) {
             std::string loc, path, name;
             error path_err = itr->second->get_property< std::string >( RESOURCE_PATH, path );
@@ -681,7 +682,7 @@ namespace irods
 
         // =-=-=-=-=-=-=-
         // iterate over all of the resources
-        lookup_table< boost::shared_ptr< resource > >::iterator resc_itr;
+        lookup_table< std::shared_ptr< resource > >::iterator resc_itr;
         for ( resc_itr = resource_name_map_.begin(); resc_itr != resource_name_map_.end(); ++resc_itr ) {
             resource_ptr& resc = resc_itr->second;
 

@@ -18,6 +18,7 @@
 // =-=-=-=-=-=-=-
 // stl includes
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -142,7 +143,7 @@ irods::error random_get_resc_for_call(irods::plugin_context& _ctx,
     }
 
     // get the object's hier string
-    boost::shared_ptr< DEST_TYPE > dst_obj = boost::dynamic_pointer_cast< DEST_TYPE >( _ctx.fco() );
+    std::shared_ptr< DEST_TYPE > dst_obj = std::dynamic_pointer_cast< DEST_TYPE >( _ctx.fco() );
     std::string hier = dst_obj->resc_hier( );
 
     // get the next child pointer given our name and the hier string
@@ -721,7 +722,7 @@ irods::error random_file_resolve_hierarchy(
          irods::UNLINK_OPERATION == ( *_opr )) {
         // =-=-=-=-=-=-=-
         // cast down the chain to our understood object type
-        irods::file_object_ptr file_obj = boost::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
+        irods::file_object_ptr file_obj = std::dynamic_pointer_cast< irods::file_object >( _ctx.fco() );
 
         // =-=-=-=-=-=-=-
         // get the next child pointer in the hierarchy, given our name and the hier string

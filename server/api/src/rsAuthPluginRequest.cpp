@@ -9,6 +9,8 @@
 #include "irods/irods_pluggable_auth_scheme.hpp"
 #include "irods/rsAuthPluginRequest.hpp"
 
+#include <memory>
+
 void _rsSetAuthRequestGetChallenge( const char* );
 
 /// =-=-=-=-=-=-=-
@@ -76,7 +78,7 @@ int rsAuthPluginRequest(
         irods::log( PASS( ret ) );
         return ret.code();
     }
-    irods::auth_ptr auth_plugin = boost::dynamic_pointer_cast <
+    irods::auth_ptr auth_plugin = std::dynamic_pointer_cast <
                                   irods::auth > ( ptr );
 
     // =-=-=-=-=-=-=-

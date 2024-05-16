@@ -15,9 +15,9 @@
 #include "irods/irods_logger.hpp"
 #include "irods/rcMisc.h"
 
-#include <boost/shared_ptr.hpp>
 #include <boost/any.hpp>
 
+#include <cstddef>
 #include <typeinfo>
 #include <functional>
 #include <utility>
@@ -25,6 +25,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include <memory>
 
 namespace irods
 {
@@ -399,12 +400,12 @@ namespace irods
 #endif // ENABLE_RE
     }; // class api_entry
 
-    typedef boost::shared_ptr< api_entry > api_entry_ptr;
+    typedef std::shared_ptr< api_entry > api_entry_ptr;
 
     /// =-=-=-=-=-=-=-
     /// @brief class which will hold statically compiled and dynamically loaded api handles
     class api_entry_table
-        : public lookup_table<api_entry_ptr, size_t, boost::hash<size_t>>
+        : public lookup_table<api_entry_ptr, size_t, std::hash<size_t>>
     {
       public:
         api_entry_table(apidef_t defs[], size_t size);
