@@ -140,7 +140,7 @@ namespace irods
 
         // =-=-=-=-=-=-=-
         // mutator function
-        error set(const key_type& _key, value_type& _val)
+        error set(const key_type& _key, const value_type& _val)
         {
             table_.insert_or_assign(_key, _val);
             return SUCCESS();
@@ -253,7 +253,7 @@ namespace irods
         // =-=-=-=-=-=-=-
         // set a property in the table
         template <typename T>
-        error set(const key_type& _key, T& _val)
+        error set(const key_type& _key, const T& _val)
         {
             // check params
             if (_key.empty()) {
