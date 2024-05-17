@@ -42,7 +42,7 @@ namespace irods
         typedef typename irods_hash_map::iterator       iterator;
         typedef typename irods_hash_map::value_type     iterator_value_type;
         typedef typename irods_hash_map::const_iterator const_iterator;
-        typedef typename const iterator_value_type      const_iterator_value_type;
+        typedef const iterator_value_type               const_iterator_value_type;
         // clang-format on
 
         lookup_table() {}
@@ -65,7 +65,7 @@ namespace irods
 
         bool has_entry(const key_type& _k) const
         {
-            return table_.contains(__k);
+            return table_.contains(_k);
         }
 
         size_type erase(const key_type& _k)
@@ -186,7 +186,7 @@ namespace irods
 
         bool has_entry(const key_type& _k) const
         {
-            return table_.contains(__k);
+            return table_.contains(_k);
         }
 
         size_type erase(const key_type& _k)
