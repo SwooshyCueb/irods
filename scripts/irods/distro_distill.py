@@ -282,33 +282,33 @@ def main():
 	if args.distilled_type:
 		dt = distribution_type()
 		if dt is None:
-			print('none')
+			print('none', end='')
 		else:
-			print(dt)
+			print(dt, end='')
 		return 0
 
 	if args.distilled_version:
 		dv = distribution_version()
 		if dv is None:
-			print('none')
+			print('none', end='')
 		else:
-			print(str(dv))
+			print(str(dv), end='')
 		return 0
 
 	if args.distilled_codename:
 		dc = distribution_codename()
 		if dc is None:
-			print('none')
+			print('none', end='')
 		else:
-			print(dc)
+			print(dc, end='')
 		return 0
 
 	if args.package_type:
 		pt = package_type()
 		if pt is None:
-			print('none')
+			print('none', end='')
 		else:
-			print(pt)
+			print(pt, end='')
 		return 0
 
 	return -1
