@@ -128,7 +128,7 @@ def distribution_version():
 	elif distro_type in ['rhel']:
 		encoding = locale.getpreferredencoding(False)
 		el_ver = subprocess.check_output(['rpm', '-E', r'%{rhel}'], timeout=5, encoding=encoding)
-		el_ver = pkg_arch.strip()
+		el_ver = el_ver.strip()
 		if el_ver == r'%{rhel}':
 			el_ver = distro.major_version()
 		if el_ver in ['', 'n/a']:
@@ -138,7 +138,7 @@ def distribution_version():
 	elif distro_type in ['fedora']:
 		encoding = locale.getpreferredencoding(False)
 		fc_ver = subprocess.check_output(['rpm', '-E', r'%{fedora}'], timeout=5, encoding=encoding)
-		fc_ver = pkg_arch.strip()
+		fc_ver = fc_ver.strip()
 		if fc_ver == r'%{fedora}':
 			fc_ver = distro.major_version()
 		if fc_ver in ['', 'n/a']:
