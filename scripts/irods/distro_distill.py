@@ -119,11 +119,11 @@ def distribution_version():
 		distro_version = '{0}.{1}'.format(distro.major_version(), distro.minor_version())
 		if distro_type == 'ubuntu':
 			upstream_version = distro.os_release_info().get('ubuntu_version_id', None)
-			if upstream_version is None and os.path.isfile('/etc/upstream-release/lsb-release'):
+			if upstream_version:
+				distro_version = upstream_version
+			elif os.path.isfile('/etc/upstream-release/lsb-release'):
 				upstream_ld = distro.LinuxDistribution(include_lsb=False, include_uname=False, os_release_file='/etc/upstream-release/lsb-release')
 				distro_version = upstream_ld.os_release_info().get('distrib_release', distro_version)
-			else:
-				distro_version = upstream_version
 		distro_version = DistroVersion(distro_version)
 	elif distro_type in ['rhel']:
 		encoding = locale.getpreferredencoding(False)
