@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 import argparse
-import logging
-import distro
 import locale
 import logging
 import os.path
 import platform
 import re
 import subprocess
-import sys
 from collections import namedtuple
 from pathlib import Path
+
+import distro
 
 __version__ = '0.1.1'
 
@@ -51,35 +50,42 @@ class DistroVersion:
 			other = DistroVersion(other)
 		elif not isinstance(other, DistroVersion):
 			return NotImplemented
-		self.version == other.version
+		return self.version == other.version
+
+	def __ne__(self, other):
+		if isinstance(other, str):
+			other = DistroVersion(other)
+		elif not isinstance(other, DistroVersion):
+			return NotImplemented
+		return self.version != other.version
 
 	def __lt__(self, other):
 		if isinstance(other, str):
 			other = DistroVersion(other)
 		elif not isinstance(other, DistroVersion):
 			return NotImplemented
-		self.version < other.version
+		return self.version < other.version
 
 	def __le__(self, other):
 		if isinstance(other, str):
 			other = DistroVersion(other)
 		elif not isinstance(other, DistroVersion):
 			return NotImplemented
-		self.version <= other.version
+		return self.version <= other.version
 
 	def __gt__(self, other):
 		if isinstance(other, str):
 			other = DistroVersion(other)
 		elif not isinstance(other, DistroVersion):
 			return NotImplemented
-		self.version > other.version
+		return self.version > other.version
 
 	def __ge__(self, other):
 		if isinstance(other, str):
 			other = DistroVersion(other)
 		elif not isinstance(other, DistroVersion):
 			return NotImplemented
-		self.version >= other.version
+		return self.version >= other.version
 
 # Distills a distribution down to its primary base.
 # For example, CentOS and Rocky Linux will return `rhel`,
