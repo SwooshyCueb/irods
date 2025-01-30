@@ -1,5 +1,6 @@
 #ifndef IRODS_CHRONO_HPP
 #define IRODS_CHRONO_HPP
+
 #include <fmt/format.h>
 #include <fmt/compile.h>
 
@@ -21,22 +22,20 @@
 #  include <fmt/chrono.h>
 #endif
 
-#ifndef STDLIB_CHRONO_HAS_CLOCK_STEADY
+#ifndef IRODS_STDLIB_CHRONO_HAS_CLOCK_STEADY
 #  if defined(_GLIBCXX_USE_CLOCK_MONOTONIC) || (defined(_LIBCPP_VERSION) && !defined(_LIBCPP_HAS_NO_MONOTONIC_CLOCK))
-#    define STDLIB_CHRONO_HAS_CLOCK_STEADY
+#    define IRODS_STDLIB_CHRONO_HAS_CLOCK_STEADY
 #  endif
 #endif
 
-#ifndef STDLIB_CHRONO_HAS_CLOCK_STEADY
+#ifndef IRODS_STDLIB_CHRONO_HAS_CLOCK_STEADY
 #  include <boost/chrono.hpp>
 #endif
 
 namespace irods
 {
-
     namespace experimental::log
     {
-
         // get UTC timestamp string suitable for logging
         [[nodiscard]] static inline std::string utc_timestamp()
         {
@@ -80,7 +79,7 @@ namespace irods
     {
         std::timespec ts; // NOLINT(cppcoreguidelines-pro-type-member-init)
         int ec = clock_gettime(CLOCK_MONOTONIC, &ts);
-#if defined(STDLIB_CHRONO_HAS_CLOCK_STEADY)
+#if defined(IRODS_STDLIB_CHRONO_HAS_CLOCK_STEADY)
         if (ec != 0) {
             namespace chrono = std::chrono;
             using clock_type = chrono::steady_clock;
@@ -108,7 +107,6 @@ namespace irods
         const std::uint64_t usec = (mt_s * 1000000) + (mt_ns / 1000);
         return usec;
     }
-
 } //namespace irods
 
 #endif // IRODS_CHRONO_HPP

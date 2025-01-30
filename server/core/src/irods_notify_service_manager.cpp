@@ -14,15 +14,15 @@ namespace irods
                                 const char* _msg, // NOLINT(bugprone-easily-swappable-parameters)
                                 [[maybe_unused]] const char* _socket_path)
     {
-        irods::experimental::log::server::debug("notifying service manager: [{}]", _msg);
+        irods::experimental::log::server::debug("Notifying service manager: [{}].", _msg);
         const auto ret = sd_notify(0, _msg);
         if (ret < 0) {
-            irods::experimental::log::server::warn("sd_notify failed with error [{}]", ret);
+            irods::experimental::log::server::warn("sd_notify failed with error [{}].", ret);
         }
     }
 } //namespace irods
 
-#else
+#else // IRODS_USE_LIBSYSTEMD
 
 #include <cstdlib>
 #include <cstring>
@@ -60,22 +60,22 @@ namespace irods
 
             using endpoint = boost::asio::local::basic_endpoint<sm_socket_protocol>;
             using socket = boost::asio::basic_datagram_socket<sm_socket_protocol>;
-        };
+        }; //class sm_socket_protocol
     } //namespace
 
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     void notify_service_manager(const std::size_t _msg_length, const char* _msg, const char* _socket_path)
     {
-        if (_msg == nullptr) {
-            irods::experimental::log::server::error("null message pointer passed to notify_service_manager");
+        if (nullptr == _msg) {
+            irods::experimental::log::server::error("Null message pointer passed to notify_service_manager.");
             return;
         }
         if (_msg_length == 0) {
-            irods::experimental::log::server::error("empty message passed to notify_service_manager");
+            irods::experimental::log::server::error("Empty message passed to notify_service_manager.");
             return;
         }
 
-        irods::experimental::log::server::debug("notifying service manager at [{}] with [{}]", _msg, _socket_path);
+        irods::experimental::log::server::debug("Notifying service manager at [{}] with [{}].", _msg, _socket_path);
 
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (_socket_path[0] != '/' && _socket_path[0] != '@') {
@@ -91,9 +91,9 @@ namespace irods
         sm_socket.open();
         const std::size_t written = sm_socket.send_to(boost::asio::buffer(_msg, _msg_length), sm_socket_path);
         if (written < _msg_length) {
-            irods::experimental::log::server::warn("parital message written to NOTIFY_SOCKET");
+            irods::experimental::log::server::warn("Parital message written to NOTIFY_SOCKET.");
         }
     }
 } //namespace irods
 
-#endif
+#endif // IRODS_USE_LIBSYSTEMD

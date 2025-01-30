@@ -16,7 +16,7 @@ namespace irods
     static inline void notify_service_manager(const std::string& _msg)
     {
         const char* sm_socket_path = std::getenv("NOTIFY_SOCKET");
-        if (sm_socket_path == nullptr) {
+        if (nullptr == sm_socket_path) {
             // if NOTIFY_SOCKET is not set, we're done
             return;
         }
@@ -28,7 +28,7 @@ namespace irods
     static inline void notify_service_manager(const fmt::format_string<Args...>& _format, Args&&... _args)
     {
         const char* sm_socket_path = std::getenv("NOTIFY_SOCKET");
-        if (sm_socket_path == nullptr) {
+        if (nullptr == sm_socket_path) {
             // if NOTIFY_SOCKET is not set, we're done
             return;
         }
@@ -43,7 +43,7 @@ namespace irods
     static inline void notify_service_manager(const CompiledFormat& _format, Args&&... _args)
     {
         const char* sm_socket_path = std::getenv("NOTIFY_SOCKET");
-        if (sm_socket_path == nullptr) {
+        if (nullptr == sm_socket_path) {
             // if NOTIFY_SOCKET is not set, we're done
             return;
         }

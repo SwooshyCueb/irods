@@ -110,7 +110,7 @@ set_target_properties(irods_server_core PROPERTIES INTERFACE_POSITION_INDEPENDEN
 set_target_properties(irods_server_core PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 if (IRODS_USE_LIBSYSTEMD)
-	objects_link_libraries(irods_server_core PRIVATE systemd::libsystemd)
+  objects_link_libraries(irods_server_core PRIVATE systemd::libsystemd)
   target_compile_definitions(irods_server_core PRIVATE IRODS_USE_LIBSYSTEMD)
 endif()
 
