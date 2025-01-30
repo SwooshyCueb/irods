@@ -4,7 +4,7 @@
 
 #include <cstddef>
 
-#ifdef IRODS_USE_LIBSYSTEMD2
+#ifdef IRODS_USE_LIBSYSTEMD
 
 #include <systemd/sd-daemon.h>
 
