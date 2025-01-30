@@ -22,7 +22,7 @@
 #endif
 
 #ifndef STDLIB_CHRONO_HAS_CLOCK_STEADY
-#  if defined(_GLIBCXX_USE_CLOCK_MONOTONIC) || ( defined(_LIBCPP_VERSION) && !defined(_LIBCPP_HAS_NO_MONOTONIC_CLOCK) )
+#  if defined(_GLIBCXX_USE_CLOCK_MONOTONIC) || (defined(_LIBCPP_VERSION) && !defined(_LIBCPP_HAS_NO_MONOTONIC_CLOCK))
 #    define STDLIB_CHRONO_HAS_CLOCK_STEADY
 #  endif
 #endif
