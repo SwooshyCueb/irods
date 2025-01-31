@@ -36,7 +36,11 @@ namespace irods
 {
     namespace experimental::log
     {
-        // get UTC timestamp string suitable for logging
+        /// \brief Gets a UTC timestamp string suitable for logging.
+        ///
+        /// \return A string containing an ISO 8601 date and time string with millisecond precision.
+        ///
+        /// \since 5.0.0
         [[nodiscard]] static inline std::string utc_timestamp()
         {
             namespace chrono = std::chrono;
@@ -74,7 +78,14 @@ namespace irods
 
     } //namespace experimental::log
 
-    // get monotonic timestamp in microseconds
+    /// \brief Gets monotonic time in microseconds.
+    ///
+    /// This function gets the monotonic time in microseconds. Monotonic time is guaranteed to never go backwards and
+    /// ignores changes to the system clock.
+    ///
+    /// systemd requires that certain service manager status notification messages contain a timestamp in this form.
+    ///
+    /// \return Unsigned integer containing current monotonic time in microseconds.
     [[nodiscard]] static inline std::uint64_t get_monotonic_usec()
     {
         std::timespec ts; // NOLINT(cppcoreguidelines-pro-type-member-init)
