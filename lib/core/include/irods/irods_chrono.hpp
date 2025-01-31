@@ -106,7 +106,7 @@ namespace irods
         const std::uint64_t mt_ns = static_cast<std::uint64_t>(ts.tv_nsec);
         const std::uint64_t usec = (mt_s * 1000000) + (mt_ns / 1000);
         return usec;
-    }
+    } // get_monotonic_usec
 } //namespace irods
 
 #endif // IRODS_CHRONO_HPP

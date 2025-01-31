@@ -1,8 +1,8 @@
 #ifndef IRODS_NOTIFY_SERVICE_MANAGER_HPP
 #define IRODS_NOTIFY_SERVICE_MANAGER_HPP
 
-#include <fmt/format.h>
 #include <fmt/compile.h>
+#include <fmt/format.h>
 
 #include <cstddef>
 #include <ctime>
@@ -11,7 +11,7 @@
 
 namespace irods
 {
-    void notify_service_manager(const std::size_t _msg_length, const char* _msg, const char* _socket_path);
+    void do_notify_service_manager(const char* _msg, const std::size_t _msg_length, const char* _socket_path);
 
     static inline void notify_service_manager(const std::string& _msg)
     {
@@ -21,7 +21,7 @@ namespace irods
             return;
         }
 
-        notify_service_manager(_msg.size(), _msg.data(), sm_socket_path);
+        do_notify_service_manager(_msg.data(), _msg.size(), sm_socket_path);
     }
 
     template <typename... Args>
@@ -34,7 +34,7 @@ namespace irods
         }
 
         auto msg = fmt::format(_format, std::forward<Args>(_args)...);
-        notify_service_manager(msg.size(), msg.data(), sm_socket_path);
+        do_notify_service_manager(msg.data(), msg.size(), sm_socket_path);
     }
 
     template <typename CompiledFormat, typename... Args>
@@ -49,7 +49,7 @@ namespace irods
         }
 
         auto msg = fmt::format(_format, std::forward<Args>(_args)...);
-        notify_service_manager(msg.size(), msg.data(), sm_socket_path);
+        do_notify_service_manager(msg.data(), msg.size(), sm_socket_path);
     }
 } //namespace irods
 

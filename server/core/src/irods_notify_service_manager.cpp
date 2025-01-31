@@ -10,9 +10,9 @@
 
 namespace irods
 {
-    void notify_service_manager([[maybe_unused]] const std::size_t _msg_length,
-                                const char* _msg, // NOLINT(bugprone-easily-swappable-parameters)
-                                [[maybe_unused]] const char* _socket_path)
+    void do_notify_service_manager(const char* _msg,
+                                   [[maybe_unused]] const std::size_t _msg_length,
+                                   [[maybe_unused]] const char* _socket_path)
     {
         irods::experimental::log::server::debug("Notifying service manager: [{}].", _msg);
         const auto ret = sd_notify(0, _msg);
@@ -64,7 +64,7 @@ namespace irods
     } //namespace
 
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-    void notify_service_manager(const std::size_t _msg_length, const char* _msg, const char* _socket_path)
+    void do_notify_service_manager(const char* _msg, const std::size_t _msg_length, const char* _socket_path)
     {
         if (nullptr == _msg) {
             irods::experimental::log::server::error("Null message pointer passed to notify_service_manager.");
@@ -80,7 +80,7 @@ namespace irods
         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (_socket_path[0] != '/' && _socket_path[0] != '@') {
             // Only AF_UNIX is supported, with path or abstract sockets
-            irods::experimental::log::server::warn("Socket in NOTIFY_SOCKET not supported");
+            irods::experimental::log::server::warn("Socket in NOTIFY_SOCKET not supported [{}].", _socket_path);
             return;
         }
 
@@ -91,9 +91,9 @@ namespace irods
         sm_socket.open();
         const std::size_t written = sm_socket.send_to(boost::asio::buffer(_msg, _msg_length), sm_socket_path);
         if (written < _msg_length) {
-            irods::experimental::log::server::warn("Parital message written to NOTIFY_SOCKET.");
+            irods::experimental::log::server::warn("Partial message written to NOTIFY_SOCKET (wrote {} of {}).", written, _msg_length);
         }
-    }
+    } // do_notify_service_manager
 } //namespace irods
 
 #endif // IRODS_USE_LIBSYSTEMD

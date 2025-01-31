@@ -31,8 +31,8 @@
 #include <boost/program_options.hpp>
 #include <boost/stacktrace.hpp>
 
-#include <fmt/format.h>
 #include <fmt/compile.h>
+#include <fmt/format.h>
 #include <nlohmann/json.hpp>
 
 #include <jsoncons/json.hpp>
@@ -510,7 +510,7 @@ Signals:
         if (child_pid < 0) {
             _exit(1);
         }
-    }
+    } // daemonize_fork
 
     auto daemonize() -> void
     {
