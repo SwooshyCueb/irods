@@ -22,7 +22,7 @@
 #endif // IRODS_ENABLE_SYSLOG
 
 #include "irods/apiNumberMap.h"
-#include "irods/irods_chrono.hpp"
+#include "irods/chrono.hpp"
 #include "irods/rodsError.h"
 #include "irods/rcMisc.h"
 #include "irods/rcConnect.h"

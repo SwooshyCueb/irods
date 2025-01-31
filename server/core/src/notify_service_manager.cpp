@@ -1,4 +1,4 @@
-#include "irods/irods_notify_service_manager.hpp"
+#include "irods/notify_service_manager.hpp"
 
 #include "irods/irods_logger.hpp"
 
