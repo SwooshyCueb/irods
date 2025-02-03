@@ -57,6 +57,25 @@ foreach(plugin IN LISTS IRODS_RESOURCE_PLUGINS)
     IRODS_ENABLE_SYSLOG
   )
 
+  if (TARGET LibArchive::LibArchive)
+    target_link_libraries(
+      ${plugin_target}
+      PRIVATE
+      LibArchive::LibArchive
+    )
+  else()
+    target_link_libraries(
+      ${plugin_target}
+      PRIVATE
+      "${LibArchive_LIBRARIES}"
+    )
+    target_include_directories(
+      ${plugin_target}
+      PRIVATE
+      "${LibArchive_INCLUDE_DIRS}"
+    )
+  endif()
+
   add_dependencies(all-plugins-resources ${plugin_target})
   install(
     TARGETS
