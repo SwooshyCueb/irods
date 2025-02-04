@@ -25,6 +25,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <zmq.hpp>
+
 #include <unistd.h>
 #include <sys/types.h>
 

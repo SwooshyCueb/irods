@@ -32,6 +32,7 @@ target_link_libraries(
   irods_server_control_plane
   INTERFACE
   irods_common
+  cppzmq::cppzmq
 )
 target_include_directories(
   irods_server_control_plane

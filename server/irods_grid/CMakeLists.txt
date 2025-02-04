@@ -18,7 +18,7 @@ target_link_libraries(
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_program_options.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_system.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_thread.so"
-  "${IRODS_EXTERNALS_FULLPATH_ZMQ}/lib/libzmq.so"
+  cppzmq::cppzmq
   ${CMAKE_DL_LIBS}
   m
 )
@@ -27,8 +27,6 @@ target_include_directories(
   PRIVATE
   "${IRODS_EXTERNALS_FULLPATH_AVRO}/include"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/include"
-  "${IRODS_EXTERNALS_FULLPATH_CPPZMQ}/include"
-  "${IRODS_EXTERNALS_FULLPATH_ZMQ}/include"
 )
 target_compile_definitions(
   irods-grid
