@@ -19,7 +19,7 @@ This module will set the following variables in your project:
 
 ``cppzmq_FOUND``
   true if cppzmq headers were found
-``cppzmq_INCLUDE_DIRECTORIES``
+``cppzmq_INCLUDE_DIRS``
   the directories containing cppzmq headers
 ``cppzmq_VERSION``
   the version of cppzmq found
@@ -49,24 +49,24 @@ if (POLICY CMP0125)
 endif()
 
 macro(_cppzmq_fix_includes)
-	get_target_property(cppzmq_INCLUDE_DIRECTORIES cppzmq::cppzmq INTERFACE_INCLUDE_DIRECTORIES)  
-	list(REMOVE_DUPLICATES cppzmq_INCLUDE_DIRECTORIES)
+	get_target_property(cppzmq_INCLUDE_DIRS cppzmq::cppzmq INTERFACE_INCLUDE_DIRECTORIES)  
+	list(REMOVE_DUPLICATES cppzmq_INCLUDE_DIRS)
 	set_target_properties(
 		cppzmq::cppzmq PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${cppzmq_INCLUDE_DIRECTORIES}"
+		INTERFACE_INCLUDE_DIRECTORIES "${cppzmq_INCLUDE_DIRS}"
 	)
 endmacro()
 
 function(_cppzmq_create_target include_dir_var_name)
 	if (NOT "${${include_dir_var_name}}" STREQUAL "${include_dir_var_name}-NOTFOUND")
 
-		set(cppzmq_INCLUDE_DIRECTORIES "${${include_dir_var_name}}")
-		set(cppzmq_INCLUDE_DIRECTORIES "${cppzmq_INCLUDE_DIRECTORIES}" PARENT_SCOPE)
+		set(cppzmq_INCLUDE_DIRS "${${include_dir_var_name}}")
+		set(cppzmq_INCLUDE_DIRS "${cppzmq_INCLUDE_DIRS}" PARENT_SCOPE)
 
 		## Get version number
 		include(CheckCPPMacroDefinition)
 
-		set(CMAKE_REQUIRED_INCLUDES "${cppzmq_INCLUDE_DIRECTORIES}")
+		set(CMAKE_REQUIRED_INCLUDES "${cppzmq_INCLUDE_DIRS}")
 		set(CMAKE_REQUIRED_QUIET "ON")
 		set(CMAKE_EXTRA_INCLUDE_FILES "zmq.hpp")
 
@@ -115,12 +115,9 @@ function(_cppzmq_create_target include_dir_var_name)
 		set_target_properties(
 			cppzmq::cppzmq
 			PROPERTIES
-			INTERFACE_INCLUDE_DIRECTORIES "${cppzmq_INCLUDE_DIRECTORIES}"
-		)
-		set_target_properties(
-			cppzmq::cppzmq
-			PROPERTIES
 			INTERFACE_LINK_LIBRARIES ZeroMQ::libzmq
+			INTERFACE_INCLUDE_DIRECTORIES "${cppzmq_INCLUDE_DIRS}"
+			VERSION "${cppzmq_VERSION}"
 		)
 	endif()
 	unset("${include_dir_var_name}" CACHE)
@@ -151,7 +148,7 @@ endif()
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(
 	cppzmq
-	REQUIRED_VARS cppzmq_INCLUDE_DIRECTORIES ZeroMQ_FOUND
+	REQUIRED_VARS cppzmq_INCLUDE_DIRS ZeroMQ_FOUND
 	VERSION_VAR cppzmq_VERSION
 )
 
