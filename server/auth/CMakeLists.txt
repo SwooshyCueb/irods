@@ -37,7 +37,6 @@ target_link_libraries(
   irods_client
   irods_plugin_dependencies
   irods_common
-  "${IRODS_EXTERNALS_FULLPATH_AVRO}/lib/libavrocpp.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_filesystem.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_thread.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_regex.so"
