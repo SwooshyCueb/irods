@@ -23,6 +23,7 @@ find_dependency(fmt "8.1.1"
   HINTS "${IRODS_EXTERNALS_FULLPATH_FMT}")
 find_dependency(spdlog "1.9.2"
   HINTS "${IRODS_EXTERNALS_FULLPATH_SPDLOG}")
+find_package(AvroCpp REQUIRED)
 
 include("${IRODS_TARGETS_PATH_UNWRAPPED}")
 

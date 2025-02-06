@@ -7,11 +7,11 @@ add_executable(
 target_link_libraries(
   irods-grid
   PRIVATE
+  Avro::AvroCpp
   irods_common
   irods_plugin_dependencies
   irods_client
   irods_server_control_plane
-  "${IRODS_EXTERNALS_FULLPATH_AVRO}/lib/libavrocpp.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_chrono.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_filesystem.so"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_regex.so"
@@ -25,7 +25,6 @@ target_link_libraries(
 target_include_directories(
   irods-grid
   PRIVATE
-  "${IRODS_EXTERNALS_FULLPATH_AVRO}/include"
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/include"
   "${IRODS_EXTERNALS_FULLPATH_CPPZMQ}/include"
   "${IRODS_EXTERNALS_FULLPATH_ZMQ}/include"

@@ -247,6 +247,7 @@ find_package(fmt "8.1.1" REQUIRED
 find_package(spdlog "1.9.2" REQUIRED
   HINTS "${IRODS_EXTERNALS_FULLPATH_SPDLOG}")
 find_package(LibArchive "3.3.1" REQUIRED)
+find_package(AvroCpp REQUIRED)
 
 if (NOT DEFINED THREADS_PREFER_PTHREAD_FLAG)
   set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -353,6 +354,7 @@ install(
   "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/CheckCPPMacroDefinition.c.in"
   "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/FindLibCXX.cmake"
   "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/UseLibCXX.cmake"
+  "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/FindAvroCpp.cmake"
   "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/FindCatch2.cmake"
   "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/Findnlohmann_json.cmake"
   "${CMAKE_IRODS_SOURCE_DIR}/cmake/Modules/IrodsExternals.cmake"
