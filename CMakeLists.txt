@@ -122,7 +122,6 @@ include(IrodsRunpathDefaults)
 set(IRODS_VERSION_MAJOR "5")
 set(IRODS_VERSION_MINOR "0")
 set(IRODS_VERSION_PATCH "90")
-set(IRODS_VERSION "${IRODS_VERSION_MAJOR}.${IRODS_VERSION_MINOR}.${IRODS_VERSION_PATCH}")
 set(IRODS_PACKAGE_REVISION "0")
 
 # Consider bumping this variable anytime the following requirements are satisfied:
@@ -133,6 +132,8 @@ set(IRODS_CATALOG_SCHEMA_VERSION "12")
 # - A JSON schema has been modified
 # - The next release involves a change in the major version number or backwards compatibility cannot be maintained
 set(IRODS_CONFIGURATION_SCHEMA_VERSION "5")
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/IrodsVersionVars.cmake")
 
 project(irods
   VERSION ${IRODS_VERSION}

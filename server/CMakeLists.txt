@@ -64,7 +64,7 @@ target_link_libraries(
   rt
 )
 set_property(TARGET irods_server PROPERTY VERSION ${IRODS_VERSION})
-set_property(TARGET irods_server PROPERTY SOVERSION ${IRODS_VERSION})
+set_property(TARGET irods_server PROPERTY SOVERSION ${IRODS_SOVERSION})
 
 target_deduplicate_interface_properties(
   irods_server

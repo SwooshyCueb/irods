@@ -37,7 +37,7 @@ target_link_libraries(
   CURL::libcurl
 )
 set_property(TARGET irods_common PROPERTY VERSION ${IRODS_VERSION})
-set_property(TARGET irods_common PROPERTY SOVERSION ${IRODS_VERSION})
+set_property(TARGET irods_common PROPERTY SOVERSION ${IRODS_SOVERSION})
 
 target_deduplicate_interface_properties(
   irods_common
@@ -90,7 +90,7 @@ target_link_libraries(
   ${CMAKE_DL_LIBS}
 )
 set_property(TARGET irods_client PROPERTY VERSION ${IRODS_VERSION})
-set_property(TARGET irods_client PROPERTY SOVERSION ${IRODS_VERSION})
+set_property(TARGET irods_client PROPERTY SOVERSION ${IRODS_SOVERSION})
 
 target_deduplicate_interface_properties(
   irods_client

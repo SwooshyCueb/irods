@@ -375,7 +375,7 @@ irods_plugin_dependencies
   "${IRODS_EXTERNALS_FULLPATH_BOOST}/include"
 )
 set_property(TARGET irods_plugin_dependencies PROPERTY VERSION ${IRODS_VERSION})
-set_property(TARGET irods_plugin_dependencies PROPERTY SOVERSION ${IRODS_VERSION})
+set_property(TARGET irods_plugin_dependencies PROPERTY SOVERSION ${IRODS_SOVERSION})
 
 target_deduplicate_interface_properties(
   irods_plugin_dependencies
