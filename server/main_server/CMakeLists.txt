@@ -2,6 +2,7 @@ add_executable(
   irodsServer
   "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
 )
+set_property(TARGET irodsServer PROPERTY VERSION ${IRODS_VERSION})
 target_link_libraries(
   irodsServer
   PRIVATE
@@ -48,6 +49,7 @@ add_executable(
   irodsAgent
   "${CMAKE_CURRENT_SOURCE_DIR}/src/agent_main.cpp"
 )
+set_property(TARGET irodsAgent PROPERTY VERSION ${IRODS_VERSION})
 target_link_libraries(
   irodsAgent
   PRIVATE

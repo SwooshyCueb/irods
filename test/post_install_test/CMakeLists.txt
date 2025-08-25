@@ -2,6 +2,7 @@ add_executable(
   irodsTestPutGet
   "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
+set_property(TARGET irodsTestPutGet PROPERTY VERSION ${IRODS_VERSION})
 target_link_libraries(
   irodsTestPutGet
   PRIVATE

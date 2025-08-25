@@ -132,6 +132,7 @@ foreach(test IN LISTS IRODS_UNIT_TESTS)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/unit_test_utils.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/test_config/irods_${test}.cmake"
   )
+  set_property(TARGET ${IRODS_TEST_TARGET} PROPERTY VERSION ${IRODS_VERSION})
   if (Catch2_VERSION VERSION_LESS "3.0.0")
     target_sources(
       ${IRODS_TEST_TARGET}

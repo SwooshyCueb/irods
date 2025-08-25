@@ -13,6 +13,7 @@ add_executable(
   "${IRODS_SERVER_DELAYSERVER_SOURCES}"
   "${IRODS_SERVER_DELAYSERVER_HEADERS_PUBLIC}"
 )
+set_property(TARGET irodsDelayServer PROPERTY VERSION ${IRODS_VERSION})
 target_link_libraries(
   irodsDelayServer
   PRIVATE

@@ -2,6 +2,7 @@ add_executable(
   hostname_resolves_to_local_address
   "${CMAKE_CURRENT_SOURCE_DIR}/src/hostname_resolves_to_local_address.cpp"
 )
+set_property(TARGET hostname_resolves_to_local_address PROPERTY VERSION ${IRODS_VERSION})
 target_link_libraries(
   hostname_resolves_to_local_address
   PRIVATE

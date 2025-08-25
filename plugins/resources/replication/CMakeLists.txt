@@ -26,6 +26,8 @@ add_library(
   "${IRODS_PLUGINS_RESOURCES_REPLICATION_HEADERS_PRIVATE}"
 )
 set_property(TARGET irods_resource_plugin-replication PROPERTY LIBRARY_OUTPUT_NAME "replication")
+set_property(TARGET irods_resource_plugin-replication PROPERTY VERSION ${IRODS_VERSION})
+set_property(TARGET irods_resource_plugin-replication PROPERTY NO_SONAME TRUE)
 target_link_libraries(
   irods_resource_plugin-replication
   PRIVATE

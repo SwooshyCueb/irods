@@ -149,6 +149,9 @@ target_link_libraries(
 )
 target_compile_definitions(RodsAPIs PRIVATE ${IRODS_COMPILE_DEFINITIONS_PRIVATE})
 
+set_property(TARGET RodsAPIs PROPERTY VERSION ${IRODS_VERSION})
+set_property(TARGET RodsAPIs PROPERTY NO_SONAME TRUE)
+
 target_deduplicate_interface_properties(
   RodsAPIs
   COMPILE_DEFINITIONS

@@ -24,6 +24,8 @@ add_library(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/irods_rule_language.cpp"
   "${IRODS_PLUGINS_RE_HEADERS_PRIVATE}"
 )
+set_property(TARGET irods_rule_engine_plugin-irods_rule_language PROPERTY VERSION ${IRODS_VERSION})
+set_property(TARGET irods_rule_engine_plugin-irods_rule_language PROPERTY NO_SONAME TRUE)
 target_link_libraries(
   irods_rule_engine_plugin-irods_rule_language
   PRIVATE

@@ -2,6 +2,7 @@ add_executable(
   mytest
   "${CMAKE_CURRENT_SOURCE_DIR}/test.c"
 )
+set_property(TARGET mytest PROPERTY VERSION ${IRODS_VERSION})
 target_link_libraries(
   mytest
   PRIVATE

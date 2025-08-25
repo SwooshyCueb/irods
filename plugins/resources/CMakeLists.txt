@@ -34,6 +34,8 @@ foreach(plugin IN LISTS IRODS_RESOURCE_PLUGINS)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/${plugin}.cpp"
   )
   set_property(TARGET ${plugin_target} PROPERTY LIBRARY_OUTPUT_NAME ${plugin_name})
+  set_property(TARGET ${plugin_target} PROPERTY VERSION ${IRODS_VERSION})
+  set_property(TARGET ${plugin_target} PROPERTY NO_SONAME TRUE)
   target_link_libraries(
     ${plugin_target}
     PRIVATE

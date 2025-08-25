@@ -26,6 +26,8 @@ foreach(plugin IN LISTS IRODS_EXPERIMENTAL_API_PLUGINS)
     "${IRODS_PLUGINS_EXPERIMENTAL_HEADERS_COMMON_PRIVATE}"
   )
   set_property(TARGET ${plugin_target} PROPERTY LIBRARY_OUTPUT_NAME ${plugin_name})
+  set_property(TARGET ${plugin_target} PROPERTY VERSION ${IRODS_VERSION})
+  set_property(TARGET ${plugin_target} PROPERTY NO_SONAME TRUE)
   target_link_libraries(
     ${plugin_target}
     PRIVATE

@@ -30,6 +30,8 @@ add_library(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/unixfilesystem.cpp"
 )
 set_property(TARGET irods_resource_plugin-unixfilesystem PROPERTY LIBRARY_OUTPUT_NAME "unixfilesystem")
+set_property(TARGET irods_resource_plugin-unixfilesystem PROPERTY VERSION ${IRODS_VERSION})
+set_property(TARGET irods_resource_plugin-unixfilesystem PROPERTY NO_SONAME TRUE)
 target_link_objects(
   irods_resource_plugin-unixfilesystem
   PRIVATE

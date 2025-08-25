@@ -3,6 +3,7 @@ foreach(harness IN ITEMS api configuration)
     irods_${harness}_test_harness
     "${CMAKE_CURRENT_SOURCE_DIR}/src/irods_${harness}_test_harness.cpp"
   )
+  set_property(TARGET irods_${harness}_test_harness PROPERTY VERSION ${IRODS_VERSION})
   target_link_libraries(
     irods_${harness}_test_harness
     PRIVATE
