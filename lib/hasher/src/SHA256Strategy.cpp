@@ -90,7 +90,11 @@ namespace irods {
         unsigned long out_len = CHKSUM_LEN - len;
 
         unsigned char out_buffer[CHKSUM_LEN];
-        base64_encode(final_buffer, SHA256_DIGEST_LENGTH, out_buffer, &out_len);
+        int rc = base64_encode(final_buffer, SHA256_DIGEST_LENGTH, out_buffer, &out_len);
+        if (0 != rc) {
+            const auto msg = fmt::format("{}: Failed to b64 encode hash.", __func__);
+            return ERROR(rc, msg);
+        }
 
         _messageDigest = SHA256_CHKSUM_PREFIX;
         _messageDigest += std::string( ( char* )out_buffer, out_len );
