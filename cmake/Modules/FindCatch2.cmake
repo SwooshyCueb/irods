@@ -1,0 +1,194 @@
+#[=======================================================================[.rst:
+FindCatch2
+-----------------
+
+Finds Catch2. Prioritizes irods-externals if a path is defined.
+If Catch2 has cmake configuration files, they will be used, but
+the return values will be tweaked slightly.
+
+The ``Catch2::Catch2`` :prop_tgt:`IMPORTED` target is
+defined, and should be used in lieu of the
+``Catch2_INCLUDE_DIRECTORIES`` variable.
+
+#]=======================================================================]
+
+cmake_policy(PUSH)
+cmake_minimum_required(VERSION 3.12...3.18 FATAL_ERROR)
+if (POLICY CMP0109)
+  # find_program requires permission to execute but not to read
+  cmake_policy(SET CMP0109 NEW)
+endif()
+if (POLICY CMP0121)
+  # Detect invalid indices in list()
+  cmake_policy(SET CMP0121 NEW)
+endif()
+if (POLICY CMP0125)
+  # Consistent behavior for cache variables managed by find_*()
+  cmake_policy(SET CMP0125 NEW)
+endif()
+if (POLICY CMP0130)
+  # Diagnose condition evaluation errors in while()
+  cmake_policy(SET CMP0130 NEW)
+endif()
+if (POLICY CMP0132)
+  # Consistent handling of compiler environment variables
+  cmake_policy(SET CMP0132 NEW)
+endif()
+if (POLICY CMP0140)
+  # Check validity of return() params
+  cmake_policy(SET CMP0140 NEW)
+endif()
+
+macro(_Catch2_fix_includes)
+  get_target_property(Catch2_INCLUDE_DIRECTORIES Catch2::Catch2 INTERFACE_INCLUDE_DIRECTORIES)  
+  list(REMOVE_DUPLICATES Catch2_INCLUDE_DIRECTORIES)
+  set_target_properties(
+    Catch2::Catch2 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORIES}"
+  )
+endmacro()
+
+function(_Catch2_create_target include_dir_var_name)
+  if (NOT "${${include_dir_var_name}}" STREQUAL "${include_dir_var_name}-NOTFOUND")
+
+    set(Catch2_INCLUDE_DIRECTORIES "${${include_dir_var_name}}")
+    set(Catch2_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORIES}" PARENT_SCOPE)
+
+    ## Get version number
+    include(CheckCPPMacroDefinition)
+
+    set(CMAKE_REQUIRED_INCLUDES "${Catch2_INCLUDE_DIRECTORIES}")
+    set(CMAKE_REQUIRED_QUIET "ON")
+    set(CMAKE_EXTRA_INCLUDE_FILES "catch2/catch.hpp")
+
+    # clear cached results if hash of json.hpp has changed
+    file(MD5 "${${include_dir_var_name}}/catch2/catch.hpp" Catch2_HPP_MD5)
+    if (NOT DEFINED Catch2_HPP_MD5_LASTRUN OR NOT Catch2_HPP_MD5 STREQUAL Catch2_HPP_MD5_LASTRUN)
+      unset(HAVE_Catch2_macro_VERSION_MAJOR CACHE)
+      unset(HAVE_Catch2_macro_VERSION_MINOR CACHE)
+      unset(HAVE_Catch2_macro_VERSION_PATCH CACHE)
+      unset(Catch2_macro_VERSION_MAJOR CACHE)
+      unset(Catch2_macro_VERSION_MINOR CACHE)
+      unset(Catch2_macro_VERSION_PATCH CACHE)
+    endif()
+    set(Catch2_HPP_MD5_LASTRUN "${Catch2_HPP_MD5}" CACHE INTERNAL "last value of Catch2_HPP_MD5")
+
+    CHECK_CPP_MACRO_DEFINITION(CATCH_VERSION_MAJOR Catch2_macro_VERSION_MAJOR LANGUAGE CXX)
+    CHECK_CPP_MACRO_DEFINITION(CATCH_VERSION_MINOR Catch2_macro_VERSION_MINOR LANGUAGE CXX)
+    CHECK_CPP_MACRO_DEFINITION(CATCH_VERSION_PATCH Catch2_macro_VERSION_PATCH LANGUAGE CXX)
+
+    set(Catch2_VERSION "${Catch2_macro_VERSION_MAJOR}.${Catch2_macro_VERSION_MINOR}.${Catch2_macro_VERSION_PATCH}")
+    set(Catch2_VERSION "${Catch2_VERSION}" PARENT_SCOPE)
+
+    set(Catch2_CONFIG "non-package:${${include_dir_var_name}}/catch2/catch.hpp")
+    set(Catch2_CONSIDERED_CONFIGS "${Catch2_CONSIDERED_CONFIGS};non-package:${${include_dir_var_name}}/catch2/catch.hpp" PARENT_SCOPE)
+    set(Catch2_CONSIDERED_VERSIONS "${Catch2_CONSIDERED_VERSIONS};${Catch2_VERSION}" PARENT_SCOPE)
+
+    unset("${include_dir_var_name}" CACHE)
+
+    if (DEFINED Catch2_FIND_VERSION)
+      if (Catch2_FIND_VERSION_EXACT)
+        if (
+          Catch2_FIND_VERSION_COUNT EQUAL 1 AND
+          NOT Catch2_FIND_VERSION VERSION_EQUAL "${Catch2_macro_VERSION_MAJOR}"
+        )
+          return()
+        elseif (
+          Catch2_FIND_VERSION_COUNT EQUAL 2 AND
+          NOT Catch2_FIND_VERSION VERSION_EQUAL "${Catch2_macro_VERSION_MAJOR}.${Catch2_macro_VERSION_MINOR}"
+        )
+          return()
+        elseif (NOT Catch2_FIND_VERSION VERSION_EQUAL Catch2_VERSION)
+          return()
+        endif()
+      elseif (Catch2_FIND_VERSION VERSION_GREATER Catch2_VERSION)
+        return()
+      endif()
+    endif()
+
+    add_library(Catch2::Catch2 INTERFACE IMPORTED)
+    set_target_properties(
+      Catch2::Catch2 PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORIES}"
+    )
+    set(Catch2_CONFIG "${Catch2_CONFIG}" PARENT_SCOPE)
+    set(Catch2_CONFIG_unset "ON" PARENT_SCOPE)
+
+  endif()
+  unset("${include_dir_var_name}" CACHE)
+endfunction()
+
+if (NOT TARGET Catch2::Catch2)
+  set(pre_def_Catch2_CONSIDERED_CONFIGS "${Catch2_CONSIDERED_CONFIGS}")
+  set(pre_def_Catch2_CONSIDERED_VERSIONS "${Catch2_CONSIDERED_VERSIONS}")
+
+  if (DEFINED Catch2_FIND_VERSION)
+    if (Catch2_FIND_VERSION_EXACT)
+      find_package(
+        Catch2 "${Catch2_FIND_VERSION}" EXACT
+        QUIET
+        NO_MODULE
+      )
+    else()
+      find_package(
+        Catch2 "${Catch2_FIND_VERSION}"
+        QUIET
+        NO_MODULE
+      )
+    endif()
+  else()
+      find_package(
+        Catch2
+        QUIET
+        NO_MODULE
+      )
+  endif()
+
+  if(pre_def_Catch2_CONSIDERED_CONFIGS)
+    set(Catch2_CONSIDERED_CONFIGS "${pre_def_Catch2_CONSIDERED_CONFIGS};${Catch2_CONSIDERED_CONFIGS}")
+    set(Catch2_CONSIDERED_VERSIONS "${pre_def_Catch2_CONSIDERED_VERSIONS};${Catch2_CONSIDERED_VERSIONS}")
+  endif()
+  unset(pre_def_Catch2_CONSIDERED_CONFIGS)
+  unset(pre_def_Catch2_CONSIDERED_VERSIONS)
+
+  if (TARGET Catch2::Catch2)
+    set(CATCH2_NO_CMAKE NO)
+  else()
+    # handle missing configuration files
+    find_path(
+      catch2_include_dir
+      NAMES "catch2/catch.hpp"
+    )
+    _Catch2_create_target("catch2_include_dir")
+    if (TARGET Catch2::Catch2)
+      set(CATCH2_NO_CMAKE YES)
+    endif()
+  endif()
+endif()
+
+if (TARGET Catch2::Catch2)
+  _Catch2_fix_includes()
+endif()
+
+if (NOT DEFINED CATCH2_NO_CMAKE)
+  set(CATCH2_NO_CMAKE YES)
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+  Catch2
+  REQUIRED_VARS Catch2_INCLUDE_DIRECTORIES
+  VERSION_VAR Catch2_VERSION
+  CONFIG_MODE
+)
+
+if (Catch2_DIR STREQUAL "Catch2_DIR-NOTFOUND")
+  unset(Catch2_DIR CACHE)
+endif()
+
+if (DEFINED Catch2_CONFIG_unset)
+  unset(Catch2_CONFIG)
+  unset(Catch2_CONFIG_unset)
+endif()
+
+cmake_policy(POP)

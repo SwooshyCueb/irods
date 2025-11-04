@@ -1,0 +1,60 @@
+name: linter-irods-clang-format
+on: pull_request
+defaults:
+    run:
+        shell: bash
+jobs:
+    clang-format:
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v3
+              with:
+                  # Get all history for the repository (branches, tags, etc).
+                  # This is required in order for clang-format to work correctly.
+                  fetch-depth: 0
+            - name: Install Prerequisites
+              run: |
+                  sudo apt-get update -qq
+                  sudo apt-get install -qq apt-transport-https ca-certificates
+                  sudo apt-get install -qq wget lsb-release gnupg
+            - name: Install Clang Compiler
+              run: |
+                  sudo mkdir -p /etc/apt/keyrings
+                  wget -qO - https://unstable.irods.org/irods-unstable-signing-key.asc | \
+                    sudo gpg \
+                      --no-options \
+                      --no-default-keyring \
+                      --no-auto-check-trustdb \
+                      --homedir /dev/null \
+                      --no-keyring \
+                      --import-options import-export \
+                      --output /etc/apt/keyrings/renci-irods-unstable-archive-keyring.pgp \
+                      --import
+                  echo "deb [signed-by=/etc/apt/keyrings/renci-irods-unstable-archive-keyring.pgp arch=amd64] https://unstable.irods.org/apt/ $(lsb_release -sc) main" | \
+                    sudo tee /etc/apt/sources.list.d/renci-irods-unstable.list
+                  sudo apt-get update -qq
+                  sudo apt-get install -qq irods-externals-clang16.0.6-0
+            - name: Run Clang-Format
+              run: |
+                  # Make clang-format available.
+                  export PATH=/opt/irods-externals/clang16.0.6-0/bin:$PATH
+
+                  # Configure Git so that "git clang-format" can be run.
+                  git config --global clangFormat.binary clang-format
+                  git config --global clangFormat.style file
+                  git config --global clangFormat.extensions 'h,h.in,c,c.in,hpp,hpp.in,cpp,cpp.in'
+
+                  # Diff the target branch with all changes made within the pull request.
+                  set +e
+                  diff_output=$(git clang-format --diff origin/$GITHUB_BASE_REF)
+                  set -e
+
+                  if [[ "$diff_output" == *"no modified files to format"* ]] || [[ "$diff_output" == *"clang-format did not modify any files"* ]]; then
+                      echo "Source code is properly formatted.";
+                      exit 0
+                  else
+                      echo "Source code needs to be formatted!";
+                      echo "$diff_output"
+                      exit 1
+                  fi

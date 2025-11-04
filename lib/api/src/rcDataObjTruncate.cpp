@@ -1,0 +1,58 @@
+#include "irods/dataObjTruncate.h"
+#include "irods/procApiRequest.h"
+#include "irods/apiNumber.h"
+
+#include <cstring>
+
+/**
+ * \fn rcDataObjTruncate (rcComm_t *conn, dataObjInp_t *dataObjInp)
+ *
+ * \brief Truncate a data object to the specified size and register the
+ *       new size with iCAT. The old checksum value associated with the
+ *       the data object will be cleared.
+ *
+ * \user client
+ *
+ * \ingroup data_object
+ *
+ * \since 1.0
+ *
+ *
+ * \remark none
+ *
+ * \note none
+ *
+ * \usage
+ * Truncate size the data object /myZone/home/john/myfile to 12345.
+ * \n dataObjInp_t dataObjInp;
+ * \n memset(&dataObjInp, 0, sizeof(dataObjInp));
+ * \n rstrcpy (dataObjInp.objPath, "/myZone/home/john/myfile", MAX_NAME_LEN);
+ * \n dataObjInp.dataSize = 12345;
+ * \n status = rcDataObjTruncate (conn, &dataObjInp);
+ * \n if (status < 0) {
+ * \n .... handle the error
+ * \n }
+ *
+ * \param[in] conn - A rcComm_t connection handle to the server.
+ * \param[in] dataObjInp - Elements of dataObjInp_t used :
+ *    \li char \b objPath[MAX_NAME_LEN] - full path of the data object.
+ *    \li rodsLong_t \b dataSize - the new size of the data object.
+ *
+ * \return integer
+ * \retval 0 on success
+ * \sideeffect none
+ * \pre none
+ * \post none
+ * \sa none
+ *
+ * \deprecated Deprecated in 4.3.2. Use #rc_replica_truncate instead.
+ **/
+
+int
+rcDataObjTruncate( rcComm_t *conn, dataObjInp_t *dataObjInp ) {
+    int status;
+    status = procApiRequest( conn, DATA_OBJ_TRUNCATE_AN, dataObjInp, NULL,
+                             ( void ** ) NULL, NULL );
+
+    return status;
+}
