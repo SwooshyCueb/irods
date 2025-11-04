@@ -4,6 +4,7 @@
 #include "irods/irods_hasher_factory.hpp"
 #include "irods/getRodsEnv.h"
 #include "irods/irods_log.hpp"
+#include "irods/irods_logger.hpp"
 #include "irods/objInfo.h"
 #include "irods/SHA256Strategy.hpp"
 #include "irods/rodsKeyWdDef.h"
@@ -16,6 +17,8 @@
 #include <fstream>
 
 #define HASH_BUF_SZ (1024*1024)
+
+using log_api = irods::experimental::log::api;
 
 int chksumLocFile(
     const char*       _file_name,
@@ -135,13 +138,21 @@ int chksumLocFile(
     buffer_read.resize( HASH_BUF_SZ );
 
     while ( in_file.read( &buffer_read[0], HASH_BUF_SZ ) ) {
-        hasher.update( buffer_read );
+        ret = hasher.update(buffer_read);
+        if (!ret.ok()) {
+            log_api::error("{}: error on hasher update, result = {}", __func__, ret.result());
+            return ret.code();
+        }
     }
 
     if ( in_file.eof() ) {
         if ( in_file.gcount() > 0 ) {
             buffer_read.resize( in_file.gcount() );
-            hasher.update( buffer_read );
+            ret = hasher.update(buffer_read);
+            if (!ret.ok()) {
+                log_api::error("{}: error on hasher update, result = {}", __func__, ret.result());
+                return ret.code();
+            }
         }
     } else {
         status = UNIX_FILE_READ_ERR - errno;
@@ -157,7 +168,11 @@ int chksumLocFile(
     // =-=-=-=-=-=-=-
     // capture the digest
     std::string digest;
-    hasher.digest( digest );
+    ret = hasher.digest(digest);
+    if (!ret.ok()) {
+        log_api::error("{}: error on hash digest, result = {}", __func__, ret.result());
+        return ret.code();
+    }
     strncpy(
         _checksum,
         digest.c_str(),
