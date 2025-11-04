@@ -16,13 +16,13 @@ typedef struct FileChksumInp {
     char objPath[MAX_NAME_LEN];
     int flag;                   // Not used for now.
     char in_pdmo[MAX_NAME_LEN]; // Flag indicating if we are being executed from a pdmo.
-    char orig_chksum[NAME_LEN]; // Original incoming checksum.
+    char orig_chksum[CHKSUM_LEN]; // Original incoming checksum.
     rodsLong_t dataSize;
     struct KeyValPair condInput;
 } fileChksumInp_t;
 
-#define fileChksumInp_PI "struct RHostAddr_PI; str fileName[MAX_NAME_LEN]; str rescHier[MAX_NAME_LEN]; str objPath[MAX_NAME_LEN]; int flags; str in_pdmo[MAX_NAME_LEN]; str orig_chksum[NAME_LEN]; double dataSize; struct KeyValPair_PI;"
-#define fileChksumOut_PI "str chksumStr[NAME_LEN];"
+#define fileChksumInp_PI "struct RHostAddr_PI; str fileName[MAX_NAME_LEN]; str rescHier[MAX_NAME_LEN]; str objPath[MAX_NAME_LEN]; int flags; str in_pdmo[MAX_NAME_LEN]; str orig_chksum[CHKSUM_LEN]; double dataSize; struct KeyValPair_PI;"
+#define fileChksumOut_PI "str chksumStr[CHKSUM_LEN];"
 
 #ifdef __cplusplus
 extern "C" {
