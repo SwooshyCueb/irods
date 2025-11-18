@@ -7,7 +7,9 @@ struct KeyValPair;
 extern "C" {
 #endif
 
+#define SHA224_CHKSUM_PREFIX    "sha224:"
 #define SHA256_CHKSUM_PREFIX    "sha2:"
+#define SHA384_CHKSUM_PREFIX    "sha384:"
 #define SHA512_CHKSUM_PREFIX    "sha512:"
 #define ADLER32_CHKSUM_PREFIX   "adler32:"
 #define SHA1_CHKSUM_PREFIX      "sha1:"

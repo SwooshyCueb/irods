@@ -1,7 +1,9 @@
 #include "irods/irods_hasher_factory.hpp"
 #include "irods/checksum.h"
 #include "irods/MD5Strategy.hpp"
+#include "irods/SHA224Strategy.hpp"
 #include "irods/SHA256Strategy.hpp"
+#include "irods/SHA384Strategy.hpp"
 #include "irods/SHA512Strategy.hpp"
 #include "irods/ADLER32Strategy.hpp"
 #include "irods/SHA1Strategy.hpp"
@@ -16,7 +18,9 @@
 namespace irods {
 
     namespace {
+        const SHA224Strategy _sha224;
         const SHA256Strategy _sha256;
+        const SHA384Strategy _sha384;
         const SHA512Strategy _sha512;
         const ADLER32Strategy _adler32;
         const MD5Strategy _md5;
@@ -25,11 +29,13 @@ namespace irods {
 
         auto make_map() {
             std::unordered_map<const std::string, const HashStrategy*, boost::hash<const std::string>> map;
-            map[ SHA256_NAME ] = &_sha256;
-            map[ SHA512_NAME ] = &_sha512;
-            map[ MD5_NAME ] = &_md5;
-            map[ ADLER32_NAME ] = &_adler32;
-            map[ SHA1_NAME ] = &_sha1;
+            map[SHA224_NAME] = &_sha224;
+            map[SHA256_NAME] = &_sha256;
+            map[SHA384_NAME] = &_sha384;
+            map[SHA512_NAME] = &_sha512;
+            map[MD5_NAME] = &_md5;
+            map[ADLER32_NAME] = &_adler32;
+            map[SHA1_NAME] = &_sha1;
             map[CRC64NVME_NAME] = &_crc64nvme;
             return map;
         }

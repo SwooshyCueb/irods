@@ -2,7 +2,9 @@ set(
   IRODS_LIB_HASHER_SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Hasher.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/MD5Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA224Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA256Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA384Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA512Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/ADLER32Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA1Strategy.cpp"
@@ -20,7 +22,9 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/ADLER32Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/MD5Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA1Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA224Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA256Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA384Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA512Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC64NVMEStrategy.hpp"
 )
