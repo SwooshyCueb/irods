@@ -18,6 +18,7 @@ extern "C" {
 #define ADLER32_CHKSUM_PREFIX    "adler32:"
 #define BLAKE2S256_CHKSUM_PREFIX "blake2s256:"
 #define BLAKE2B512_CHKSUM_PREFIX "blake2b512:"
+#define RIPEMD160_CHKSUM_PREFIX  "ripemd160:"
 #define SHA1_CHKSUM_PREFIX       "sha1:"
 #define CRC64NVME_CHKSUM_PREFIX  "crc64nvme:"
 

@@ -5,6 +5,7 @@
 #include "irods/BLAKE2S256Strategy.hpp"
 #include "irods/BLAKE2B512Strategy.hpp"
 #include "irods/MD5Strategy.hpp"
+#include "irods/RIPEMD160Strategy.hpp"
 #include "irods/SHA1Strategy.hpp"
 #include "irods/SHA224Strategy.hpp"
 #include "irods/SHA256Strategy.hpp"
@@ -28,6 +29,7 @@ TEST_CASE("checksum hashers", "[string]")
     // clang-format off
     const std::tuple<const std::string, const std::string, const std::string> hash_test_vals = GENERATE(
         std::make_tuple("asdf1234ASDF!@#$", irods::MD5_NAME,        "70f597ce53373700ba5e5dfc892bac59"),
+        std::make_tuple("asdf1234ASDF!@#$", irods::RIPEMD160_NAME,  "ripemd160:UVHzP22Tjw4a5I6tq6IAov6BhoQ="),
         std::make_tuple("asdf1234ASDF!@#$", irods::SHA1_NAME,       "sha1:w4pAayodnxhmStdLObUARZUQu68="),
         std::make_tuple("asdf1234ASDF!@#$", irods::SHA224_NAME,     "sha224:5j1Y61ecdH9cNtodIbqXfcamsyfvxWtOiXxOhw=="),
         std::make_tuple("asdf1234ASDF!@#$", irods::SHA256_NAME,     "sha2:jwyFBi2ugt4geZKPMJzJlE8eQ/M8qLpAbKNzS0uUBG4="),
@@ -42,6 +44,7 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("asdf1234ASDF!@#$", irods::BLAKE2B512_NAME, "blake2b512:8rcItqoe9fBwG146xoP/hFq8YPopVY7lLJfy/WsIB/nIE0qBHzYrZzg8HSGDW1y8Xu6+1OxFJrbk6v1dDLlU+A=="),
         std::make_tuple("asdf1234ASDF!@#$", irods::CRC64NVME_NAME,  "crc64nvme:OTvEv/lA92k="),
         std::make_tuple("",                 irods::MD5_NAME,        "d41d8cd98f00b204e9800998ecf8427e"),
+        std::make_tuple("",                 irods::RIPEMD160_NAME,  "ripemd160:nBGFpcXp/FRhKAiXfuj1SLIljTE="),
         std::make_tuple("",                 irods::SHA1_NAME,       "sha1:2jmj7l5rSw0yVb/vlWAYkK/YBwk="),
         std::make_tuple("",                 irods::SHA224_NAME,     "sha224:0UoCjCo6K8lHYQK7KII0xBWisB+CjqYqxbPkLw=="),
         std::make_tuple("",                 irods::SHA256_NAME,     "sha2:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="),
@@ -100,6 +103,7 @@ TEST_CASE("checksum hashers", "[nonstring]")
     // clang-format off
     const std::tuple<const std::vector<unsigned char>, const std::string, const std::string> hash_test_vals = GENERATE(
         std::make_tuple(test_nonstring_1, irods::MD5_NAME,        "47146e5abac11e150e8f5b0c64574e51"),
+        std::make_tuple(test_nonstring_1, irods::RIPEMD160_NAME,  "ripemd160:MeAxdcWTqFhEXHlqmTHpjfFCvwc="),
         std::make_tuple(test_nonstring_1, irods::SHA1_NAME,       "sha1:6VDLSmD0EtUrxhB5PLpAH1jAAxs="),
         std::make_tuple(test_nonstring_1, irods::SHA224_NAME,     "sha224:itXKJLt8VONkX0tENAMGUTqT49tEJ3A5v0apMg=="),
         std::make_tuple(test_nonstring_1, irods::SHA256_NAME,     "sha2:Vv+8sjSakZcB2PPoVQZUaVIU5EDD4DjA3mNSB4bB7u4="),

@@ -12,6 +12,7 @@
 #include "irods/ADLER32Strategy.hpp"
 #include "irods/BLAKE2S256Strategy.hpp"
 #include "irods/BLAKE2B512Strategy.hpp"
+#include "irods/RIPEMD160Strategy.hpp"
 #include "irods/SHA1Strategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
 #include "irods/rodsErrorTable.h"
@@ -35,6 +36,7 @@ namespace irods {
         const ADLER32Strategy _adler32;
         const BLAKE2S256Strategy _blake2s256;
         const BLAKE2B512Strategy _blake2b512;
+        const RIPEMD160Strategy _ripemd160;
         const MD5Strategy _md5;
         const SHA1Strategy _sha1;
         const CRC64NVMEStrategy _crc64nvme;
@@ -53,6 +55,7 @@ namespace irods {
             map[ADLER32_NAME] = &_adler32;
             map[BLAKE2S256_NAME] = &_blake2s256;
             map[BLAKE2B512_NAME] = &_blake2b512;
+            map[RIPEMD160_NAME] = &_ripemd160;
             map[SHA1_NAME] = &_sha1;
             map[CRC64NVME_NAME] = &_crc64nvme;
             return map;
