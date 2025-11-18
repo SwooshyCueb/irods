@@ -8,6 +8,10 @@
 #include "irods/SHA256Strategy.hpp"
 #include "irods/SHA384Strategy.hpp"
 #include "irods/SHA512Strategy.hpp"
+#include "irods/SHA3_224Strategy.hpp"
+#include "irods/SHA3_256Strategy.hpp"
+#include "irods/SHA3_384Strategy.hpp"
+#include "irods/SHA3_512Strategy.hpp"
 #include "irods/irods_hasher_factory.hpp"
 #include "irods/Hasher.hpp"
 
@@ -27,6 +31,10 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("asdf1234ASDF!@#$", irods::SHA256_NAME,    "sha2:jwyFBi2ugt4geZKPMJzJlE8eQ/M8qLpAbKNzS0uUBG4="),
         std::make_tuple("asdf1234ASDF!@#$", irods::SHA384_NAME,    "sha384:BD//lWRFUEz7mMG4zoggITtQjlSF8MBg/fjJl1+uMY57zPizttAJWFTLhrgl4BfI"),
         std::make_tuple("asdf1234ASDF!@#$", irods::SHA512_NAME,    "sha512:oOcXC8A34DybRSivQjyGExYLzEmHXzh0KUtZZzE72EDQ3lTcWhOkF0XmLkzX85QrJT80Ral+v4/zDQthDvoj8A=="),
+        std::make_tuple("asdf1234ASDF!@#$", irods::SHA3_224_NAME,  "sha3-224:kDBLP5GPa98mLMoe8/jPB2HGoFfplVgsn692qQ=="),
+        std::make_tuple("asdf1234ASDF!@#$", irods::SHA3_256_NAME,  "sha3-256:vF1z+CEQYIF4ktT8vB4sOSq1Urgo7839PngeDpPxYQ0="),
+        std::make_tuple("asdf1234ASDF!@#$", irods::SHA3_384_NAME,  "sha3-384:UyR/UMTpWdTI8WkInbQtFHbF74MiwSP7TQs96WsAtLUOwdEdJEutuna3qyIXs8Pj"),
+        std::make_tuple("asdf1234ASDF!@#$", irods::SHA3_512_NAME,  "sha3-512:pdy3weePvJChF15U5hsYZqzLZlnFEKZ7e9BLR5j2cbdL63vNI23DUvVYyz2t3eB2ZEMtFmmviSPUUtn34ZkZNA=="),
         std::make_tuple("asdf1234ASDF!@#$", irods::ADLER32_NAME,   "adler32:28b8042f"),
         std::make_tuple("asdf1234ASDF!@#$", irods::CRC64NVME_NAME, "crc64nvme:OTvEv/lA92k="),
         std::make_tuple("",                 irods::MD5_NAME,       "d41d8cd98f00b204e9800998ecf8427e"),
@@ -35,6 +43,10 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("",                 irods::SHA256_NAME,    "sha2:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="),
         std::make_tuple("",                 irods::SHA384_NAME,    "sha384:OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb"),
         std::make_tuple("",                 irods::SHA512_NAME,    "sha512:z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="),
+        std::make_tuple("",                 irods::SHA3_224_NAME,  "sha3-224:a04DQjZn27c7bhVFTw6xq9RZf5obB44/W1prxw=="),
+        std::make_tuple("",                 irods::SHA3_256_NAME,  "sha3-256:p//G+L8e12ZRwUdWoGHWYvWA/03kO0n6gtgKS4D4Q0o="),
+        std::make_tuple("",                 irods::SHA3_384_NAME,  "sha3-384:DGOnW4ReT30BEH2FLkwkhcUaUKqqlPxhmV5xu+6YOirDcTgxJkrbR/tr0eBY1fAE"),
+        std::make_tuple("",                 irods::SHA3_512_NAME,  "sha3-512:pp9zzKI6msXItWfcGFp1bpfJghZP4lhZ4NHcwUdcgKYVshI68fX5TBHj6UAsOsVY9QAZnZW20+MBdYWGKB3NJg=="),
         std::make_tuple("",                 irods::ADLER32_NAME,   "adler32:00000001"),
         std::make_tuple("",                 irods::CRC64NVME_NAME, "crc64nvme:AAAAAAAAAAA=")
     );
@@ -87,6 +99,10 @@ TEST_CASE("checksum hashers", "[nonstring]")
         std::make_tuple(test_nonstring_1, irods::SHA256_NAME,    "sha2:Vv+8sjSakZcB2PPoVQZUaVIU5EDD4DjA3mNSB4bB7u4="),
         std::make_tuple(test_nonstring_1, irods::SHA384_NAME,    "sha384:Haq2JtwsY+mlA4EfzIGV1N0G35l2wlXyrX150BJZ6sCcYFRoZ6+Ki+890t+3YLao"),
         std::make_tuple(test_nonstring_1, irods::SHA512_NAME,    "sha512:dnPmYhU+7FrWj8hdMRjFEiXu11cQYVItfjGMweCcETgY8NWX5VhIoEk4Stka7RDifH0mz/L7tpIF2H7+YcKkxA=="),
+        std::make_tuple(test_nonstring_1, irods::SHA3_224_NAME,  "sha3-224:vpfTGzACu3JAlERVJ8dxoJmtCYhDfHb9aZE1mQ=="),
+        std::make_tuple(test_nonstring_1, irods::SHA3_256_NAME,  "sha3-256:hrDPA0us+I6bAICCQjBw5seH7jzox7y4c6mWDOsaCNI="),
+        std::make_tuple(test_nonstring_1, irods::SHA3_384_NAME,  "sha3-384:pXepoTgranzq2ze09XpzcCzsSQYMKENyMEargaeyvY8WUZO4u9Ou+To1MG4SXthS"),
+        std::make_tuple(test_nonstring_1, irods::SHA3_512_NAME,  "sha3-512:Z2ABAeHlDmI7PfO1p46C1Wzue1rpO8Cj1obZomifmZhHCgUQgI0/15dHQFIn0x/oTHPLco53u1hrt9q3ONzE0w=="),
         std::make_tuple(test_nonstring_1, irods::ADLER32_NAME,   "adler32:60e80a3f"),
         std::make_tuple(test_nonstring_1, irods::CRC64NVME_NAME, "crc64nvme:LmR4qrQyCGM=")
     );

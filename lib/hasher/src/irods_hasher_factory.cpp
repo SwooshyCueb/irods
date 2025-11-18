@@ -5,6 +5,10 @@
 #include "irods/SHA256Strategy.hpp"
 #include "irods/SHA384Strategy.hpp"
 #include "irods/SHA512Strategy.hpp"
+#include "irods/SHA3_224Strategy.hpp"
+#include "irods/SHA3_256Strategy.hpp"
+#include "irods/SHA3_384Strategy.hpp"
+#include "irods/SHA3_512Strategy.hpp"
 #include "irods/ADLER32Strategy.hpp"
 #include "irods/SHA1Strategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
@@ -22,6 +26,10 @@ namespace irods {
         const SHA256Strategy _sha256;
         const SHA384Strategy _sha384;
         const SHA512Strategy _sha512;
+        const SHA3_224Strategy _sha3_224;
+        const SHA3_256Strategy _sha3_256;
+        const SHA3_384Strategy _sha3_384;
+        const SHA3_512Strategy _sha3_512;
         const ADLER32Strategy _adler32;
         const MD5Strategy _md5;
         const SHA1Strategy _sha1;
@@ -33,6 +41,10 @@ namespace irods {
             map[SHA256_NAME] = &_sha256;
             map[SHA384_NAME] = &_sha384;
             map[SHA512_NAME] = &_sha512;
+            map[SHA3_224_NAME] = &_sha3_224;
+            map[SHA3_256_NAME] = &_sha3_256;
+            map[SHA3_384_NAME] = &_sha3_384;
+            map[SHA3_512_NAME] = &_sha3_512;
             map[MD5_NAME] = &_md5;
             map[ADLER32_NAME] = &_adler32;
             map[SHA1_NAME] = &_sha1;

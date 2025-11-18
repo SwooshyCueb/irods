@@ -6,6 +6,10 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA256Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA384Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA512Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA3_224Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA3_256Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA3_384Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA3_512Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/ADLER32Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA1Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC64NVMEStrategy.cpp"
@@ -26,6 +30,10 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA256Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA384Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA512Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_224Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_256Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_384Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_512Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC64NVMEStrategy.hpp"
 )
 
