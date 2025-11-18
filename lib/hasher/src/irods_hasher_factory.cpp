@@ -10,6 +10,8 @@
 #include "irods/SHA3_384Strategy.hpp"
 #include "irods/SHA3_512Strategy.hpp"
 #include "irods/ADLER32Strategy.hpp"
+#include "irods/BLAKE2S256Strategy.hpp"
+#include "irods/BLAKE2B512Strategy.hpp"
 #include "irods/SHA1Strategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
 #include "irods/rodsErrorTable.h"
@@ -31,6 +33,8 @@ namespace irods {
         const SHA3_384Strategy _sha3_384;
         const SHA3_512Strategy _sha3_512;
         const ADLER32Strategy _adler32;
+        const BLAKE2S256Strategy _blake2s256;
+        const BLAKE2B512Strategy _blake2b512;
         const MD5Strategy _md5;
         const SHA1Strategy _sha1;
         const CRC64NVMEStrategy _crc64nvme;
@@ -47,6 +51,8 @@ namespace irods {
             map[SHA3_512_NAME] = &_sha3_512;
             map[MD5_NAME] = &_md5;
             map[ADLER32_NAME] = &_adler32;
+            map[BLAKE2S256_NAME] = &_blake2s256;
+            map[BLAKE2B512_NAME] = &_blake2b512;
             map[SHA1_NAME] = &_sha1;
             map[CRC64NVME_NAME] = &_crc64nvme;
             return map;
