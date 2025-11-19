@@ -19,6 +19,7 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC32CStrategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC64Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC64NVMEStrategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/XXH32Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/checksum.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/irods_hasher_factory.cpp"
 )
@@ -47,6 +48,7 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC32CStrategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC64Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC64NVMEStrategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/XXH32Strategy.hpp"
 )
 
 add_library(

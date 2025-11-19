@@ -18,6 +18,7 @@
 #include "irods/SHA3_256Strategy.hpp"
 #include "irods/SHA3_384Strategy.hpp"
 #include "irods/SHA3_512Strategy.hpp"
+#include "irods/XXH32Strategy.hpp"
 #include "irods/irods_hasher_factory.hpp"
 #include "irods/Hasher.hpp"
 
@@ -49,6 +50,7 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("asdf1234ASDF!@#$", irods::CRC32C_NAME,     "crc32c:68286c7b"),
         std::make_tuple("asdf1234ASDF!@#$", irods::CRC64_NAME,      "crc64:UQ7gUeBPz98="),
         std::make_tuple("asdf1234ASDF!@#$", irods::CRC64NVME_NAME,  "crc64nvme:OTvEv/lA92k="),
+        std::make_tuple("asdf1234ASDF!@#$", irods::XXH32_NAME,      "xxh32:94b70189"),
         std::make_tuple("",                 irods::MD5_NAME,        "d41d8cd98f00b204e9800998ecf8427e"),
         std::make_tuple("",                 irods::RIPEMD160_NAME,  "ripemd160:nBGFpcXp/FRhKAiXfuj1SLIljTE="),
         std::make_tuple("",                 irods::SHA1_NAME,       "sha1:2jmj7l5rSw0yVb/vlWAYkK/YBwk="),
@@ -66,7 +68,8 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("",                 irods::CRC32_NAME,      "crc32:00000000"),
         std::make_tuple("",                 irods::CRC32C_NAME,     "crc32c:00000000"),
         std::make_tuple("",                 irods::CRC64_NAME,      "crc64:AAAAAAAAAAA="),
-        std::make_tuple("",                 irods::CRC64NVME_NAME,  "crc64nvme:AAAAAAAAAAA=")
+        std::make_tuple("",                 irods::CRC64NVME_NAME,  "crc64nvme:AAAAAAAAAAA="),
+        std::make_tuple("",                 irods::XXH32_NAME,      "xxh32:02cc5d05")
     );
     // clang-format on
 
@@ -128,7 +131,8 @@ TEST_CASE("checksum hashers", "[nonstring]")
         std::make_tuple(test_nonstring_1, irods::CRC32_NAME,      "crc32:01e3fca2"),
         std::make_tuple(test_nonstring_1, irods::CRC32C_NAME,     "crc32c:fcaf6f72"),
         std::make_tuple(test_nonstring_1, irods::CRC64_NAME,      "crc64:GHUbRFbwJ8s="),
-        std::make_tuple(test_nonstring_1, irods::CRC64NVME_NAME,  "crc64nvme:LmR4qrQyCGM=")
+        std::make_tuple(test_nonstring_1, irods::CRC64NVME_NAME,  "crc64nvme:LmR4qrQyCGM="),
+        std::make_tuple(test_nonstring_1, irods::XXH32_NAME,      "xxh32:45fe6d2f")
     );
     // clang-format on
 

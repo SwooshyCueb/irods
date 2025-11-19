@@ -18,6 +18,7 @@
 #include "irods/CRC32CStrategy.hpp"
 #include "irods/CRC64Strategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
+#include "irods/XXH32Strategy.hpp"
 #include "irods/rodsErrorTable.h"
 
 #include <boost/container_hash/hash.hpp>
@@ -46,6 +47,7 @@ namespace irods {
         const CRC32CStrategy _crc32c;
         const CRC64Strategy _crc64;
         const CRC64NVMEStrategy _crc64nvme;
+        const XXH32Strategy _xxh32;
 
         auto make_map() {
             std::unordered_map<const std::string, const HashStrategy*, boost::hash<const std::string>> map;
@@ -67,6 +69,7 @@ namespace irods {
             map[CRC32C_NAME] = &_crc32c;
             map[CRC64_NAME] = &_crc64;
             map[CRC64NVME_NAME] = &_crc64nvme;
+            map[XXH32_NAME] = &_xxh32;
             return map;
         }
 
