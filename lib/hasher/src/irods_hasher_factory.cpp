@@ -16,6 +16,7 @@
 #include "irods/SHA1Strategy.hpp"
 #include "irods/CRC32Strategy.hpp"
 #include "irods/CRC32CStrategy.hpp"
+#include "irods/CRC64Strategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
 #include "irods/rodsErrorTable.h"
 
@@ -43,6 +44,7 @@ namespace irods {
         const SHA1Strategy _sha1;
         const CRC32Strategy _crc32;
         const CRC32CStrategy _crc32c;
+        const CRC64Strategy _crc64;
         const CRC64NVMEStrategy _crc64nvme;
 
         auto make_map() {
@@ -63,6 +65,7 @@ namespace irods {
             map[SHA1_NAME] = &_sha1;
             map[CRC32_NAME] = &_crc32;
             map[CRC32C_NAME] = &_crc32c;
+            map[CRC64_NAME] = &_crc64;
             map[CRC64NVME_NAME] = &_crc64nvme;
             return map;
         }
