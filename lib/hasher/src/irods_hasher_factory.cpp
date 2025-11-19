@@ -14,6 +14,8 @@
 #include "irods/BLAKE2B512Strategy.hpp"
 #include "irods/RIPEMD160Strategy.hpp"
 #include "irods/SHA1Strategy.hpp"
+#include "irods/CRC32Strategy.hpp"
+#include "irods/CRC32CStrategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
 #include "irods/rodsErrorTable.h"
 
@@ -39,6 +41,8 @@ namespace irods {
         const RIPEMD160Strategy _ripemd160;
         const MD5Strategy _md5;
         const SHA1Strategy _sha1;
+        const CRC32Strategy _crc32;
+        const CRC32CStrategy _crc32c;
         const CRC64NVMEStrategy _crc64nvme;
 
         auto make_map() {
@@ -57,6 +61,8 @@ namespace irods {
             map[BLAKE2B512_NAME] = &_blake2b512;
             map[RIPEMD160_NAME] = &_ripemd160;
             map[SHA1_NAME] = &_sha1;
+            map[CRC32_NAME] = &_crc32;
+            map[CRC32C_NAME] = &_crc32c;
             map[CRC64NVME_NAME] = &_crc64nvme;
             return map;
         }

@@ -20,6 +20,8 @@ extern "C" {
 #define BLAKE2B512_CHKSUM_PREFIX "blake2b512:"
 #define RIPEMD160_CHKSUM_PREFIX  "ripemd160:"
 #define SHA1_CHKSUM_PREFIX       "sha1:"
+#define CRC32_CHKSUM_PREFIX      "crc32:"
+#define CRC32C_CHKSUM_PREFIX     "crc32c:"
 #define CRC64NVME_CHKSUM_PREFIX  "crc64nvme:"
 
 int verifyChksumLocFile(char *fileName, const char *myChksum, char *chksumStr);

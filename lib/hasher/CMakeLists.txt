@@ -15,6 +15,8 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BLAKE2B512Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/RIPEMD160Strategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/SHA1Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC32Strategy.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC32CStrategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/CRC64NVMEStrategy.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/checksum.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/irods_hasher_factory.cpp"
@@ -40,6 +42,8 @@ set(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_256Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_384Strategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/SHA3_512Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC32Strategy.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC32CStrategy.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/irods/CRC64NVMEStrategy.hpp"
 )
 

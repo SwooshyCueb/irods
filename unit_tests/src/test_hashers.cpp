@@ -1,6 +1,8 @@
 #include <catch2/catch_all.hpp>
 
 #include "irods/ADLER32Strategy.hpp"
+#include "irods/CRC32Strategy.hpp"
+#include "irods/CRC32CStrategy.hpp"
 #include "irods/CRC64NVMEStrategy.hpp"
 #include "irods/BLAKE2S256Strategy.hpp"
 #include "irods/BLAKE2B512Strategy.hpp"
@@ -42,6 +44,8 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("asdf1234ASDF!@#$", irods::ADLER32_NAME,    "adler32:28b8042f"),
         std::make_tuple("asdf1234ASDF!@#$", irods::BLAKE2S256_NAME, "blake2s256:fqIHD5tDxIA8CzXyJoHG5pVCmDSEunmFIVEwbQchj+Y="),
         std::make_tuple("asdf1234ASDF!@#$", irods::BLAKE2B512_NAME, "blake2b512:8rcItqoe9fBwG146xoP/hFq8YPopVY7lLJfy/WsIB/nIE0qBHzYrZzg8HSGDW1y8Xu6+1OxFJrbk6v1dDLlU+A=="),
+        std::make_tuple("asdf1234ASDF!@#$", irods::CRC32_NAME,      "crc32:0689c095"),
+        std::make_tuple("asdf1234ASDF!@#$", irods::CRC32C_NAME,     "crc32c:68286c7b"),
         std::make_tuple("asdf1234ASDF!@#$", irods::CRC64NVME_NAME,  "crc64nvme:OTvEv/lA92k="),
         std::make_tuple("",                 irods::MD5_NAME,        "d41d8cd98f00b204e9800998ecf8427e"),
         std::make_tuple("",                 irods::RIPEMD160_NAME,  "ripemd160:nBGFpcXp/FRhKAiXfuj1SLIljTE="),
@@ -57,6 +61,8 @@ TEST_CASE("checksum hashers", "[string]")
         std::make_tuple("",                 irods::ADLER32_NAME,    "adler32:00000001"),
         std::make_tuple("",                 irods::BLAKE2S256_NAME, "blake2s256:aSF6MHmQgJThESHQQjVKfB9VtkgsoaUeGyUN/R7Q7vk="),
         std::make_tuple("",                 irods::BLAKE2B512_NAME, "blake2b512:eGoC90IBWQPGxv2FJVLScpEvR0DhWEdhiobiF/cfVBnSXhAxr+5YUxOJZESTTrBLkDpoWxRIt1XVb3Aa/pvizg=="),
+        std::make_tuple("",                 irods::CRC32_NAME,      "crc32:00000000"),
+        std::make_tuple("",                 irods::CRC32C_NAME,     "crc32c:00000000"),
         std::make_tuple("",                 irods::CRC64NVME_NAME,  "crc64nvme:AAAAAAAAAAA=")
     );
     // clang-format on
@@ -116,6 +122,8 @@ TEST_CASE("checksum hashers", "[nonstring]")
         std::make_tuple(test_nonstring_1, irods::ADLER32_NAME,    "adler32:60e80a3f"),
         std::make_tuple(test_nonstring_1, irods::BLAKE2S256_NAME, "blake2s256:4ZTQECDEcBy1qEB1PqPW0IKC51n8KI4AMsooy65VHNo="),
         std::make_tuple(test_nonstring_1, irods::BLAKE2B512_NAME, "blake2b512:yNpst5ywvFV0Djy4yUYK9eY65DsByyOHq/7yViBwzT2YTyD6tYP7qB2C/7EjdpfNln1B6n60qAmBeVxJkHtRMA=="),
+        std::make_tuple(test_nonstring_1, irods::CRC32_NAME,      "crc32:01e3fca2"),
+        std::make_tuple(test_nonstring_1, irods::CRC32C_NAME,     "crc32c:fcaf6f72"),
         std::make_tuple(test_nonstring_1, irods::CRC64NVME_NAME,  "crc64nvme:LmR4qrQyCGM=")
     );
     // clang-format on
