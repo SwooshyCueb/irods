@@ -6,7 +6,6 @@
 
 #include <boost/any.hpp>
 
-#include <cstdlib>
 #include <string>
 
 namespace irods
@@ -27,9 +26,6 @@ namespace irods
         error update(const std::string&, boost::any& context) const override;
         error digest(std::string& messageDigest, boost::any& context) const override;
         bool isChecksum(const std::string&) const override;
-
-      private:
-        static constexpr std::size_t crc_bits = 64;
     };
 } // namespace irods
 
