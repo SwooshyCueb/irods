@@ -41,10 +41,15 @@
 #include <boost/asio.hpp>
 #include <boost/chrono.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/program_options.hpp>
 #include <boost/stacktrace.hpp>
 
 #include <fmt/format.h>
+#include <fmt/compile.h>
+#if FMT_VERSION >= 90000
+#  include <fmt/std.h>
+#endif
 #include <iterator>
 #include <nlohmann/json.hpp>
 
@@ -988,6 +993,7 @@ namespace
 
     auto log_stacktrace_files() -> void
     {
+        using log_list = std::vector<irods::experimental::log::key_value>;
         const auto sleep_time =
             irods::get_advanced_setting<int>(irods::KW_CFG_STACKTRACE_FILE_PROCESSOR_SLEEP_TIME_IN_SECONDS);
         static auto previous_log_time = std::chrono::steady_clock::now();
@@ -1060,14 +1066,20 @@ namespace
 
                 // 3. Write the contents of the stacktrace file to syslog.
                 // clang-format off
-                log_af::critical({
-                    {"log_message", boost::stacktrace::to_string(stacktrace)},
+                log_list stacktrace_log({
+                    {"log_message", "stacktrace dump found"},
                     {"stacktrace_agent_pid", pid},
                     {"stacktrace_timestamp_utc", fmt::format("{}.{}Z", utc_ss.str(), remaining_millis)},
                     {"stacktrace_timestamp_epoch_seconds", epoch_seconds},
                     {"stacktrace_timestamp_epoch_milliseconds", remaining_millis}
                 });
                 // clang-format on
+                const std::size_t frames_digits = boost::lexical_cast<std::string>(stacktrace.size()).size();
+                const std::string frame_key_fmt_string = fmt::format("stacktrace_frame_{{0:0{0:d}d}}", frames_digits);
+                for (std::size_t frame_idx = 0; const auto& frame : stacktrace) {
+                    stacktrace_log.emplace_back(fmt::format(fmt::runtime(frame_key_fmt_string), frame_idx++), boost::stacktrace::to_string(frame));
+                }
+                log_af::critical(stacktrace_log);
 
                 // 4. Delete the stacktrace file.
                 //
